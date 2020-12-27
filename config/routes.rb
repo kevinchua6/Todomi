@@ -1,3 +1,20 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  namespace :api do
+    get 'subtasks/index'
+    get 'subtasks/create'
+    get 'subtasks/update'
+    get 'subtasks/destroy'
+  end
+
+  get 'pages/index'
+  root 'pages#index'
+
+  namespace :api do
+    namespace :v1 do
+      resources :todos
+      resources :subtasks, only: [:create, :destroy]
+    end
+  end
+
+  get '*path', to: 'pages#index', via: :all
 end

@@ -3,7 +3,6 @@ class CreateTodos < ActiveRecord::Migration[6.0]
     create_table :todos do |t|
       t.string :title
       t.boolean :done
-      t.string :description
       t.integer :urgency
 
       t.timestamps
