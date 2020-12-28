@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :todos
-      resources :subtasks, only: [:create, :destroy]
+      resources :subtasks
     end
   end
 

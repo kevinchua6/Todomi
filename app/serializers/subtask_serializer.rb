@@ -1,4 +1,4 @@
 class SubtaskSerializer
   include JSONAPI::Serializer
-  attributes :string, :done
+  attributes :text, :done, :todo_id
 end
