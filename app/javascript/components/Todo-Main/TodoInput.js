@@ -22,7 +22,6 @@ const TodoInput = (props) => {
                     placeholder="Add a task" maxLength="50" />
             </InputContainer>
     )
-
 }
 
 export default TodoInput

@@ -39,67 +39,44 @@ const Todos = () => {
     const [inputTodo, setInputTodo] = useState({title: ''})
     const [loaded, setLoaded] = useState(false)
 
-    const handleKeypress = (e) => {
-        // console.log("e.target.name", e.target.name)
-        // console.log("e.target.value", e.target.value)
-        if (e.key === 'Enter') {
-            const csrfToken = document.querySelector('[name=csrf-token]').content
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
-
-            console.log("todo:", inputTodo)
-            
-            axios.post('/api/v1/todos', inputTodo)
-            .then (resp => {
-                // Get the old todos plus the new one that is just gotten back 
-                // from the post request so we don't need to request from the server
-                // twice
-                
-                // setTodos({...todos, resp.data})
-                setTodos(todos.concat([resp.data.data]))
-
-                setInputTodo({title: ''})
-                
-            })
-            .catch( resp => console.log(resp) )
-        }
-        // console.log(todos)
-        // console.log("todo:", inputTodo)
-    }
-
-    const handleChange = (e) => {
-        // console.log("e.target.name", e.target.name)
-        // console.log("e.target.value", e.target.value)
-
-        setInputTodo(Object.assign({}, inputTodo, {title: e.target.value}))
-
-        console.log("todo:", inputTodo)
-    }
-
-
+    // Runs on first render
     useEffect( () => {
-        // Get all todos from api and display them here  
-        // Update todos in our state
-        // When number of todos changes, update the data accordingly
-        console.log("changed")
+        // Loads todos from API into `todos` state var
         axios.get('/api/v1/todos')
         .then( resp => {
             setTodos(resp.data.data)
             setLoaded(true)
-            // console.log(resp) 
         })
         .catch( resp => console.log(resp) )
     }, [])
 
-    console.log(todos)
-    const grid = todos.map( myTodo => {
-        // console.log(myTodo)
-        return (
+    // Sort via ascending order (Add a button to swap the order in the future)
+    const grid = todos.slice().reverse().map( myTodo => {
+        (
             <Todo
                 key={myTodo.id} 
                 attributes={myTodo.attributes}
             />
         )
     })
+
+    const handleKeypress = (e) => {
+        if (e.key === 'Enter') {
+            const csrfToken = document.querySelector('[name=csrf-token]').content
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+
+            axios.post('/api/v1/todos', inputTodo)
+            .then (resp => {
+                setTodos(todos.concat([resp.data.data]))
+                setInputTodo({title: ''})
+            })
+            .catch( resp => console.log(resp) )
+        }
+    }
+
+    const handleChange = (e) => { setInputTodo({title: e.target.value}) }
+
+
 
     return (
         <div>
