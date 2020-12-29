@@ -7,7 +7,7 @@ class Api::V1::TodosController < ApplicationController
     end
   
     def show 
-        todo = Todo.find_by(params[:id])
+        todo = Todo.find(params[:id])
 
         render json: TodoSerializer.new(todo, options).serializable_hash.to_json
     end
@@ -24,7 +24,7 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def update
-        todo = Todo.find_by(params[:id])
+        todo = Todo.find(params[:id])
 
         if todo.update(todo_params)
             render json: TodoSerializer.new(todo, options).serializable_hash.to_json
@@ -34,7 +34,7 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def destroy
-        todo = Todo.find_by(params[:id])
+        todo = Todo.find(params[:id])
 
         if todo.destroy
             head :no_content, status: :ok

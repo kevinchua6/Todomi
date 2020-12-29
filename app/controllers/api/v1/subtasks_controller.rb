@@ -1,13 +1,6 @@
 class Api::V1::SubtasksController < ApplicationController
   protect_from_forgery with: :null_session
 
-
-    # def show 
-    #     subtask = Todo.find_by(params[:id])
-
-    #     render json: TodoSerializer.new(todo).serializable_hash.to_json
-    # end
-
     def create
       subtask = todo.subtasks.new(subtask_params)
 
@@ -19,7 +12,7 @@ class Api::V1::SubtasksController < ApplicationController
     end
 
     def update
-      subtask = Subtask.find_by(params[:id])
+      subtask = Subtask.find(params[:id])
 
         if subtask.update(subtask_params)
             render json: SubtaskSerializer.new(subtask).serializable_hash.to_json
@@ -29,7 +22,7 @@ class Api::V1::SubtasksController < ApplicationController
     end
 
     def destroy
-      subtask = Subtask.find_by(params[:id])
+      subtask = Subtask.find(params[:id])
 
         if subtask.destroy
             head :no_content, status: :ok
