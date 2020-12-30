@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react'
+import { useDebounce } from 'use-debounce'
 import axios from 'axios'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -45,6 +46,7 @@ const Field = styled.div`
 `
 const Subtask = (props) => {
     const [todo, setTodo] = useState({})
+    const [debouncedTodo] = useDebounce(todo, 1000)
     const [subtasks, setSubtasks] = useState([])
     const [loaded, setLoaded] = useState(false)
 
@@ -66,15 +68,13 @@ const Subtask = (props) => {
     }, [])
 
 
-    const handleChange = (e) => {
-        setTodo({title: e.target.value})
-    }
+    const handleChange = (e) => { setTodo({title: e.target.value}) }
 
     useEffect( () => {
         if (loaded) {
             const csrfToken = document.querySelector('[name=csrf-token]').content
             axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
-    
+
             const url = `/api/v1/todos/${props.match.params.todo_id}`
             
             axios.patch(url, {title: todo.title})
@@ -91,7 +91,8 @@ const Subtask = (props) => {
             .catch( resp => console.log(resp) )
         }
 
-    }, [todo])
+    // https://stackoverflow.com/a/58021695, yarn add use-debounce
+    }, [debouncedTodo])
 
 
     return (

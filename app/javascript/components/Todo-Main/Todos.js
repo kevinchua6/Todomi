@@ -51,14 +51,14 @@ const Todos = () => {
     }, [])
 
     // Sort via ascending order (Add a button to swap the order in the future)
-    const grid = todos.slice().reverse().map( myTodo => {
-        (
+    const grid = todos.slice().reverse().map( myTodo => 
+         (
             <Todo
                 key={myTodo.id} 
                 attributes={myTodo.attributes}
             />
         )
-    })
+    )
 
     const handleKeypress = (e) => {
         if (e.key === 'Enter') {
