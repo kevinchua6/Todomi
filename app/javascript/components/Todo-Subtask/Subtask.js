@@ -3,27 +3,11 @@ import axios from 'axios'
 import { useDebounce } from 'use-debounce'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
+import Checkbox from '@material-ui/core/Checkbox'
+import TextField from '@material-ui/core/TextField'
 
-const Field = styled.div`
-    border-radius: 4px;
-
-    input {
-        min-height: 50px;
-        border-radius: 4px;
-        border: 1px solid #e6e6e6;
-        margin: 0 0 12px 0;
-        padding: 12px;
-        width: 94%;
-    }
-
-    textarea {
-        width: 100%;
-        min-height: 80px;
-        border-radius: 4px;
-        border: 1px solid #e6e6e6;
-        margin: 12px 0;
-        padding: 12px;
-    }
+const Wrapper = styled.div`
+    padding-top: 10px;
 `
 
 const Subtask = (props) => {
@@ -33,8 +17,6 @@ const Subtask = (props) => {
     const [debouncedSubtasktxt] = useDebounce(subtasktxt, 1000)
 
     const [subtaskBool, setSubtaskBool] = useState(done)
-
-    
 
     const csrfToken = document.querySelector('[name=csrf-token]').content
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
@@ -48,6 +30,8 @@ const Subtask = (props) => {
             axios.patch(url, {done: subtaskBool})
             .then( resp =>  console.log(resp) )
             .catch( resp => console.log(resp) )
+
+            // 
         }
     }, [subtaskBool])
 
@@ -66,19 +50,26 @@ const Subtask = (props) => {
     }, [debouncedSubtasktxt])
 
     return (
-        <Field>
-            <input 
+        <Wrapper>
+            <Checkbox 
+                style={{
+                    "padding-top": 4
+                }}
                 onChange={handleChangeCheckbox} 
                 type="checkbox" 
                 checked={subtaskBool}
+                color="primary"
             />
-            <input 
+            <TextField 
+                style={{
+                    width: "91%"
+                }}
                 onChange={handleChangeSubtask} 
                 value={subtasktxt} 
                 type="text" 
                 name="title" 
             />
-        </Field>
+        </Wrapper>
     )
 }
 

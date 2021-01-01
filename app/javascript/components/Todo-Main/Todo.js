@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
+import Button from '@material-ui/core/Button'
 
 const Card = styled.div`
     border: 1px solid #efefef;
@@ -20,9 +21,9 @@ const LinkWrapper = styled.div`
         color: #fff;
         background: #000;
         border-radius: 4px;
-        padding: 10px 50px;
+        padding: 10px 40px;
         border: 10px 50px;
-        width: 100%;
+        width: 70%;
         text-decoration: none;
     }
 `
@@ -35,9 +36,14 @@ const Todo = (props) => {
         <Card>
             <TodoTitle>{props.attributes.title}</TodoTitle>
             {/* <div className="todo-urgency">{props.attributes.avg_score}</div> */}
-            <LinkWrapper>
-                <Link to={`/todos/${props.attributes.id}`}>View Task</Link>
-            </LinkWrapper>
+            <Button
+                style={{
+                    margin: 20
+                }}
+                variant="contained"
+                href= {`/todos/${props.attributes.id}`}>
+                View Task
+            </Button>
         </Card>
     )
 }

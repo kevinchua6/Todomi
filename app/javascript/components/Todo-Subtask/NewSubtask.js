@@ -3,17 +3,21 @@ import axios from 'axios'
 import { useDebounce } from 'use-debounce'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
+import TextField from '@material-ui/core/TextField'
 
 const NewSubtask = (props) => {
     return (
-        <div>
-            <input 
-                value = {props.inputSubtasks.text}
-                onKeyPress = {props.handleNewSubtaskKeypress}
-                onChange = {props.handleNewSubtaskChange}
-                placeholder="Add a subtask" maxLength="50"
-            />
-        </div>
+        <TextField 
+            style={{
+                width: "100%",
+                height: "50%"
+            }}
+            variant="outlined"
+            value = {props.inputSubtasks.text}
+            onKeyPress = {props.handleNewSubtaskKeypress}
+            onChange = {props.handleNewSubtaskChange}
+            label="Add a subtask" maxLength="50"
+        />
     )
 }
 

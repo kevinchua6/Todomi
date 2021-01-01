@@ -8,7 +8,7 @@ import styled from 'styled-components'
 //Style
 const Home = styled.div`
     text-align: center;
-    max-width: 1100px;
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;
 `
@@ -30,7 +30,7 @@ const Grid = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 20px;
-    width: 100%;
+    width: 93%;
     padding: 30px;
 `
 

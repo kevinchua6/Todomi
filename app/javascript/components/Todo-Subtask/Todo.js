@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Subtask from './Subtask'
 import NewSubtask from './NewSubtask'
+import TextField from '@material-ui/core/TextField'
 
 const Card = styled.div `
     border: 1px solid rgba(0,0,0,0.1);
@@ -25,33 +26,11 @@ const Description = styled.div `
     padding: 0 0 20px 0;
     font-size: 14px;
 `
-const Field = styled.div`
-    border-radius: 4px;
-
-    input {
-        min-height: 50px;
-        border-radius: 4px;
-        border: 1px solid #e6e6e6;
-        margin: 0 0 12px 0;
-        padding: 12px;
-        width: 94%;
-    }
-
-    textarea {
-        width: 100%;
-        min-height: 80px;
-        border-radius: 4px;
-        border: 1px solid #e6e6e6;
-        margin: 12px 0;
-        padding: 12px;
-    }
-`
-
 const Wrapper = styled.div`
-    padding: 20px;
+    padding-top: 130px;
     height: 100vh;
-    width: 50%;
-    padding-top: 100px;
+    width: 55%;
+    margin: auto;
 `
 
 const Todo = (props) => {
@@ -116,13 +95,16 @@ const Todo = (props) => {
     let renderSubtasks
     if (loaded && subtasks) {
         console.log(subtasks)
-        renderSubtasks = subtasks.map( (ele, index) => {
+        const undoneSubtasks = subtasks.filter(subtask => !subtask.attributes.done)
+        const doneSubtasks = subtasks.filter(subtask => subtask.attributes.done)
+
+        renderSubtasks = [...undoneSubtasks, ...doneSubtasks].map( (subtask, index) => {
             return (
                 <Subtask
                     todo_id={todo.id}
-                    id={ele.id}
+                    id={subtask.id}
                     key={index}
-                    attributes={ele.attributes}
+                    attributes={subtask.attributes}
                     loaded={loaded}
                 />
             )
@@ -134,24 +116,31 @@ const Todo = (props) => {
         {
             loaded && 
             <Wrapper>
-                <Field>
-                    <input 
+
+                    <TextField 
+                        style= {{
+                            width: "100%",
+                            margin: 5,
+                            "margin-bottom": 25
+                        }}
+                        variant="outlined"
                         onChange={handleChangeTodo} 
                         value={todo.title} 
                         type="text" 
                         name="title" 
+                        label="Todo Title"
                     />
-
+                    <br/>
                     {renderSubtasks}
-
+                    <br/>
                     <NewSubtask
+                        width={1/2}
                         inputSubtasks={inputSubtasks}
                         handleNewSubtaskKeypress={handleNewSubtaskKeypress}
                         handleNewSubtaskChange={handleNewSubtaskChange}
-                        
                     />
 
-                </Field>
+
             </Wrapper>
         }
         </div>
