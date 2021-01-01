@@ -1,28 +1,9 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { useDebounce } from 'use-debounce'
 import axios from 'axios'
+import { useDebounce } from 'use-debounce'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-const Card = styled.div `
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 4px;
-    padding: 20px;
-    margin: 0 20px 20px 0;
-`
-
-const Title = styled.div `
-    padding: 0 0 20px 0;
-    font-size: 18px;
-`
-const RatingContainer = styled.div `
-    display: flex;
-    flex-direction: row;
-`
-const Description = styled.div `
-    padding: 0 0 20px 0;
-    font-size: 14px;
-`
 const Field = styled.div`
     border-radius: 4px;
 
@@ -44,70 +25,60 @@ const Field = styled.div`
         padding: 12px;
     }
 `
+
 const Subtask = (props) => {
-    const [todo, setTodo] = useState({})
-    const [debouncedTodo] = useDebounce(todo, 1000)
-    const [subtasks, setSubtasks] = useState([])
-    const [loaded, setLoaded] = useState(false)
+    const {text, done} = props.attributes
 
-    // console.log(props.match.params.todo_id)
-    useEffect( () => {
-        const url = `/api/v1/todos/${props.match.params.todo_id}`
-        
-        axios.get(url)
-        .then( 
-            resp => { 
-                setTodo(resp.data.data.attributes) 
-                // todo has {done:false, id: 1, title: "buy milk", urgency:3}
-                setSubtasks(resp.data.data.relationships.subtasks)
-                // subtasks are an array of objects with [{id:"1", type:"subtask"}]
-                setLoaded(true)
-            }
-        )
-        .catch( resp => console.log(resp) )
-    }, [])
+    const [subtasktxt, setSubtasktxt] = useState(text)
+    const [debouncedSubtasktxt] = useDebounce(subtasktxt, 1000)
 
+    const [subtaskBool, setSubtaskBool] = useState(done)
 
-    const handleChange = (e) => { setTodo({title: e.target.value}) }
+    
+
+    const csrfToken = document.querySelector('[name=csrf-token]').content
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+
+    const handleChangeCheckbox = () => { setSubtaskBool(!subtaskBool) }
 
     useEffect( () => {
-        if (loaded) {
-            const csrfToken = document.querySelector('[name=csrf-token]').content
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+        if (props.loaded) {
+            const url = `/api/v1/subtasks/${props.id}`
 
-            const url = `/api/v1/todos/${props.match.params.todo_id}`
-            
-            axios.patch(url, {title: todo.title})
-            .then( 
-                resp => { 
-                    // setTodo(resp.data.data.attributes) 
-                    // // todo has {done:false, id: 1, title: "buy milk", urgency:3}
-                    // setSubtasks(resp.data.data.relationships.subtasks)
-                    // // subtasks are an array of objects with [{id:"1", type:"subtask"}]
-                    // setLoaded(true)
-                    console.log(resp)
-                }
-            )
+            axios.patch(url, {done: subtaskBool})
+            .then( resp =>  console.log(resp) )
             .catch( resp => console.log(resp) )
         }
+    }, [subtaskBool])
 
-    // https://stackoverflow.com/a/58021695, yarn add use-debounce
-    }, [debouncedTodo])
-
+    // TODO: when subtask is checked, put a strikethrough, make it transparent
+    // and put it to the bottom.
+    const handleChangeSubtask = (e) => { setSubtasktxt(e.target.value) }
+    
+    useEffect( () => {
+        if (props.loaded) {
+            const url = `/api/v1/subtasks/${props.id}`
+            
+            axios.patch(url, {text: subtasktxt})
+            .then( resp =>  console.log(resp) )
+            .catch( resp => console.log(resp) )
+        }
+    }, [debouncedSubtasktxt])
 
     return (
-        <div>
-        {
-            loaded && 
-            <Field>
-                <input onChange={handleChange} 
-                value={todo.title} 
+        <Field>
+            <input 
+                onChange={handleChangeCheckbox} 
+                type="checkbox" 
+                checked={subtaskBool}
+            />
+            <input 
+                onChange={handleChangeSubtask} 
+                value={subtasktxt} 
                 type="text" 
-                name="title" />
-                
-            </Field>
-        }
-        </div>
+                name="title" 
+            />
+        </Field>
     )
 }
 

@@ -18,7 +18,7 @@ const TodoInput = (props) => {
                 <InputTodo type="text"
                     value = {props.inputTodo.title}
                     onChange = {props.handleChange}
-                    input onKeyPress={props.handleKeypress}
+                    onKeyPress={props.handleKeypress}
                     placeholder="Add a task" maxLength="50" />
             </InputContainer>
     )
