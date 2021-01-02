@@ -13,24 +13,22 @@ const Card = styled.div `
     padding: 20px;
     margin: 0 20px 20px 0;
 `
-
-const Title = styled.div `
-    padding: 0 0 20px 0;
-    font-size: 18px;
-`
-const RatingContainer = styled.div `
-    display: flex;
-    flex-direction: row;
-`
 const Description = styled.div `
     padding: 0 0 20px 0;
     font-size: 14px;
 `
 const Wrapper = styled.div`
-    padding-top: 130px;
+    padding-top: 110px;
     height: 100vh;
     width: 55%;
     margin: auto;
+`
+
+const Title = styled.div`
+    padding-left: 5px;
+    padding-bottom: 40px;
+    font-size: 50px;
+    font-weight: bold;
 `
 
 const Todo = (props) => {
@@ -38,6 +36,9 @@ const Todo = (props) => {
     const [todo, setTodo] = useState({})
     const [debouncedTodo] = useDebounce(todo, 1000)
     const [subtasks, setSubtasks] = useState([])
+    // const [rerenderSubtasks, setRerenderSubtasks] = useState(false)
+    const [subtaskId, setSubtaskId] = useState()
+    const [subtaskDone, setSubtaskDone] = useState()
     const [loaded, setLoaded] = useState(false)
 
     const [inputSubtasks, setInputSubtasks] = useState({text: '', done: false, todo_id: todo_id})
@@ -54,7 +55,7 @@ const Todo = (props) => {
                 setTodo(resp.data.data.attributes) 
                 // todo has {done:false, id: 1, title: "buy milk", urgency:3}
                 setSubtasks(resp.data.included)
-                // subtasks are an array of objects with [{id:"1", type:"subtask"}]
+                // subtasks are an array of objects with [{id:"1", type:"subtask", attributes:{}}]
                 setLoaded(true)
             }
         )
@@ -91,23 +92,38 @@ const Todo = (props) => {
     }
 
     const handleNewSubtaskChange = (e) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
+    
+    const getSubtask = (id, done) => {
+        setSubtaskId(id)
+        setSubtaskDone(done)
+        subtasks.map( subtask => {
+            if (subtask.id == id) {
+                subtask.attributes.done = !subtask.attributes.done
+                // console.log(subtask)
+                // console.log(subtask.attributes.done)
+                return
+            }
+        })
+    }
 
     let renderSubtasks
-    if (loaded && subtasks) {
-        console.log(subtasks)
-        const undoneSubtasks = subtasks.filter(subtask => !subtask.attributes.done)
-        const doneSubtasks = subtasks.filter(subtask => subtask.attributes.done)
 
-        renderSubtasks = [...undoneSubtasks, ...doneSubtasks].map( (subtask, index) => {
-            return (
-                <Subtask
-                    todo_id={todo.id}
-                    id={subtask.id}
-                    key={index}
-                    attributes={subtask.attributes}
-                    loaded={loaded}
-                />
-            )
+
+    if (loaded && subtasks) {
+        const undoneSubtasks = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
+        const doneSubtasks = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
+
+        renderSubtasks = [...undoneSubtasks, ...doneSubtasks].map( subtask => {
+                return (
+                    <Subtask
+                        getSubtask={getSubtask}
+                        todo_id={todo.id}
+                        id={subtask.id}
+                        key={subtask.id}
+                        attributes={subtask.attributes}
+                        loaded={loaded}
+                    />
+                )
         })
     }
 
@@ -116,25 +132,24 @@ const Todo = (props) => {
         {
             loaded && 
             <Wrapper>
-
+                <Title> Edit Task </Title>
                     <TextField 
                         style= {{
                             width: "100%",
                             margin: 5,
-                            "margin-bottom": 25
+                            marginBottom: 25
                         }}
                         variant="outlined"
                         onChange={handleChangeTodo} 
                         value={todo.title} 
                         type="text" 
                         name="title" 
-                        label="Todo Title"
+                        label="Task"
                     />
                     <br/>
-                    {renderSubtasks}
+                        {renderSubtasks}
                     <br/>
                     <NewSubtask
-                        width={1/2}
                         inputSubtasks={inputSubtasks}
                         handleNewSubtaskKeypress={handleNewSubtaskKeypress}
                         handleNewSubtaskChange={handleNewSubtaskChange}

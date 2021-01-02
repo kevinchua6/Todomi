@@ -4,9 +4,14 @@ import styled from 'styled-components'
 import Button from '@material-ui/core/Button'
 
 const Card = styled.div`
+    transition: box-shadow .3s;
     border: 1px solid #efefef;
     background: #fff;
     text-align: center;
+
+    &:hover {
+        box-shadow: 0 0 11px rgba(33,33,33,.2);
+    }
 `
 
 const TodoTitle = styled.div`
