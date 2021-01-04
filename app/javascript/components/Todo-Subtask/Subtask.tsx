@@ -11,8 +11,19 @@ const Wrapper = styled.div`
     padding-top: 10px;
 `
 
+export interface Subtask {
+    id: string,
+    todo_id: number | undefined,
+    updateSubtask: (id: string, done: boolean) => void,
+    attributes: {
+        text: string,
+        done: boolean,
+        todo_id: number
+    }
+    loaded: boolean
+}
 
-const Subtask = (props) => {
+const Subtask = (props: Subtask) => {
 
     const {text, done} = props.attributes
 
@@ -21,12 +32,9 @@ const Subtask = (props) => {
 
     const [subtaskBool, setSubtaskBool] = useState(done)
 
-    const csrfToken = document.querySelector('[name=csrf-token]').content
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
-
     const handleChangeCheckbox = () => { 
         setSubtaskBool(!subtaskBool)
-        props.getSubtask(props.id, done)
+        props.updateSubtask(props.id, done)
     }
 
     useEffect( () => {
@@ -43,7 +51,7 @@ const Subtask = (props) => {
 
     // TODO: when subtask is checked, put a strikethrough, make it transparent
     // and put it to the bottom.
-    const handleChangeSubtask = (e) => { setSubtasktxt(e.target.value) }
+    const handleChangeSubtask = (e: React.ChangeEvent<HTMLInputElement>) => { setSubtasktxt(e.target.value) }
     
     useEffect( () => {
         if (props.loaded) {
@@ -64,13 +72,12 @@ const Subtask = (props) => {
                     paddingTop: 4
                 }}
                 onChange={handleChangeCheckbox} 
-                type="checkbox" 
                 checked={subtaskBool}
                 color="primary"
             />
-            {/* https://stackoverflow.com/a/57919651 for styling text inside input */}
             <TextField 
                 inputProps={{
+                    maxlength: 50,
                     style: {
                         textDecoration: subtaskBool ? "line-through" : "",
                         opacity: subtaskBool ? 0.5 : 1

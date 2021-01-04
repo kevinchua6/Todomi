@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import Subtask from './Subtask'
 import NewSubtask from './NewSubtask'
 import TextField from '@material-ui/core/TextField'
+import { InputTodo } from '../Todo-Main/Todos'
 
 const Card = styled.div `
     border: 1px solid rgba(0,0,0,0.1);
@@ -23,7 +24,6 @@ const Wrapper = styled.div`
     width: 55%;
     margin: auto;
 `
-
 const Title = styled.div`
     padding-left: 5px;
     padding-bottom: 40px;
@@ -31,20 +31,34 @@ const Title = styled.div`
     font-weight: bold;
 `
 
-const Todo = (props) => {
+export interface TodoSubtaskProps {
+    match: {
+        params: {
+            todo_id: string
+        }
+    }
+}
+
+export interface Subtasks {
+    id: string,
+    attributes: {
+        text: string,
+        done: boolean,
+        todo_id: number
+    }    
+}
+
+const Todo = (props: TodoSubtaskProps) => {
     const {todo_id} = props.match.params
-    const [todo, setTodo] = useState({})
+    
+    const [todo, setTodo] = useState<InputTodo>({ title: "" })
+
     const [debouncedTodo] = useDebounce(todo, 1000)
-    const [subtasks, setSubtasks] = useState([])
-    // const [rerenderSubtasks, setRerenderSubtasks] = useState(false)
-    const [subtaskId, setSubtaskId] = useState()
-    const [subtaskDone, setSubtaskDone] = useState()
+    const [subtasks, setSubtasks] = useState<Subtasks[]>([])
+    const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([])
     const [loaded, setLoaded] = useState(false)
 
     const [inputSubtasks, setInputSubtasks] = useState({text: '', done: false, todo_id: todo_id})
-
-    const csrfToken = document.querySelector('[name=csrf-token]').content
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
 
     useEffect( () => {
         const url = `/api/v1/todos/${todo_id}`
@@ -62,7 +76,7 @@ const Todo = (props) => {
         .catch( resp => console.log(resp) )
     }, [])
 
-    const handleChangeTodo = (e) => { setTodo({title: e.target.value}) }
+    const handleChangeTodo = (e: React.ChangeEvent<HTMLInputElement>) => { setTodo({...todo, title: e.target.value}) }
 
     useEffect( () => {
         if (loaded) {
@@ -76,11 +90,9 @@ const Todo = (props) => {
             )
             .catch( resp => console.log(resp) )
         }
-    // https://stackoverflow.com/a/58021695, yarn add use-debounce
     }, [debouncedTodo])
 
-    const handleNewSubtaskKeypress = (e) => {
-        console.log(inputSubtasks)
+    const handleNewSubtaskKeypress = (e: React.KeyboardEvent<Element>) => {
         if (e.key === 'Enter') {
             axios.post('/api/v1/subtasks', inputSubtasks)
             .then (resp => {
@@ -91,41 +103,35 @@ const Todo = (props) => {
         }
     }
 
-    const handleNewSubtaskChange = (e) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
+    const handleNewSubtaskChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
     
-    const getSubtask = (id, done) => {
-        setSubtaskId(id)
-        setSubtaskDone(done)
-        subtasks.map( subtask => {
-            if (subtask.id == id) {
-                subtask.attributes.done = !subtask.attributes.done
-                // console.log(subtask)
-                // console.log(subtask.attributes.done)
-                return
-            }
-        })
+    const updateSubtask = (id: string, done: boolean) => {
+        setSubtasks(subtasks.map( subtask => 
+            subtask.id === id
+                ? {...subtask, attributes: {...subtask.attributes, done: !done} }
+                : subtask
+            )
+        )
     }
 
-    let renderSubtasks
+    useEffect( ()=> {
+        const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
+        const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
 
-
-    if (loaded && subtasks) {
-        const undoneSubtasks = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
-        const doneSubtasks = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
-
-        renderSubtasks = [...undoneSubtasks, ...doneSubtasks].map( subtask => {
+        setRenderSubtasks([...undoneSubtasks, ...doneSubtasks].map( subtask => {
                 return (
                     <Subtask
-                        getSubtask={getSubtask}
-                        todo_id={todo.id}
-                        id={subtask.id}
                         key={subtask.id}
+                        id={subtask.id}
+                        todo_id={todo.id}
+                        updateSubtask={updateSubtask}
                         attributes={subtask.attributes}
                         loaded={loaded}
                     />
                 )
-        })
-    }
+            })
+        )
+    }, [loaded, subtasks])
 
     return (
         <div>
@@ -139,6 +145,7 @@ const Todo = (props) => {
                             margin: 5,
                             marginBottom: 25
                         }}
+                        inputProps={{ maxlength: 50 }}
                         variant="outlined"
                         onChange={handleChangeTodo} 
                         value={todo.title} 
@@ -154,8 +161,6 @@ const Todo = (props) => {
                         handleNewSubtaskKeypress={handleNewSubtaskKeypress}
                         handleNewSubtaskChange={handleNewSubtaskChange}
                     />
-
-
             </Wrapper>
         }
         </div>

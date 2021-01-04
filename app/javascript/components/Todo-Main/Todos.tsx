@@ -34,9 +34,36 @@ const Grid = styled.div`
     padding: 30px;
 `
 
+
+export interface Todos {
+    id: string,
+    type: string,
+    attributes: {
+        title: string,
+        done: boolean,
+        urgency: number,
+        id: number
+    },
+    relationships: {
+        subtasks: {
+            data: {
+                id: string,
+                type: string
+            }[]
+        }
+    }
+}
+
+export interface InputTodo {
+    title: string,
+    done?: boolean,
+    id?: number,
+    urgency?: number
+}
+
 const Todos = () => {
-    const [todos, setTodos] = useState([])
-    const [inputTodo, setInputTodo] = useState({title: ''})
+    const [todos, setTodos] = useState<Todos[]>([])
+    const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" })
     const [loaded, setLoaded] = useState(false)
 
     // Runs on first render
@@ -60,21 +87,21 @@ const Todos = () => {
         )
     )
 
-    const handleKeypress = (e) => {
+    const handleKeypress = (e: React.KeyboardEvent<Element>) => {
         if (e.key === 'Enter') {
-            const csrfToken = document.querySelector('[name=csrf-token]').content
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+            // const csrfToken = document.querySelector('[name=csrf-token]').content
+            // axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
 
             axios.post('/api/v1/todos', inputTodo)
             .then (resp => {
-                setTodos(todos.concat([resp.data.data]))
+                setTodos(todos.concat(resp.data.data))
                 setInputTodo({title: ''})
             })
             .catch( resp => console.log(resp) )
         }
     }
 
-    const handleChange = (e) => { setInputTodo({title: e.target.value}) }
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
 
 
 

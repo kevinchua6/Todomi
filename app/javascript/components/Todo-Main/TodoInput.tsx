@@ -12,14 +12,23 @@ const InputTodo = styled.input`
     box-sizing: border-box;
 `
 
-const TodoInput = (props) => {
+export interface TodoInput {
+    inputTodo: {
+        title: string
+    },
+    handleKeypress: (e: React.KeyboardEvent<Element>) => void,
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+const TodoInput = (props: TodoInput) => {
     return (
             <InputContainer>
                 <InputTodo type="text"
                     value = {props.inputTodo.title}
                     onChange = {props.handleChange}
                     onKeyPress={props.handleKeypress}
-                    placeholder="Add a task" maxLength="50" />
+                    placeholder="Add a task" 
+                    maxLength={50} />
             </InputContainer>
     )
 }

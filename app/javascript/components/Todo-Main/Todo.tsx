@@ -35,12 +35,20 @@ const LinkWrapper = styled.div`
 
 // TODO: Change the link wrapper to the entire card and the View Task button to be delete instead
 
-const Todo = (props) => {
-    // console.log(props)
+export interface Todo {
+    attributes: {
+        title: string,
+        done: boolean,
+        urgency: number,
+        id: number
+    }
+}
+
+const Todo = (props: Todo) => {
     return (
         <Card>
             <TodoTitle>{props.attributes.title}</TodoTitle>
-            {/* <div className="todo-urgency">{props.attributes.avg_score}</div> */}
+            {/* <div className="todo-urgency">{props.attributes.urgency}</div> */}
             <Button
                 style={{
                     margin: 20
