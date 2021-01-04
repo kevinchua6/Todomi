@@ -22,7 +22,7 @@ const Card = styled.div`
 
 const TodoTitle = styled.div`
     padding: 20px 0 15px 0;
-    font-size: 20.5px;
+    font-size: 22px;
 `
 
 const LinkWrapper = styled.div`
@@ -86,19 +86,24 @@ const Todo = (props: Todo) => {
         const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
         const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
 
-        setRenderSubtasks([...undoneSubtasks, ...doneSubtasks].map( subtask => {
-                return (
-                    <TodoSubtask
-                        key={subtask.id}
-                        id={subtask.id}
-                        todo_id={+todo_id}
-                        updateSubtask={updateSubtask}
-                        attributes={subtask.attributes}
-                    />
-                )
-            })
+        const maxNoSubtask = 6
+        setRenderSubtasks([...undoneSubtasks, ...doneSubtasks].map( (subtask, index) => 
+            index < maxNoSubtask
+            ? (
+                <TodoSubtask
+                    key={subtask.id}
+                    id={subtask.id}
+                    todo_id={+todo_id}
+                    updateSubtask={updateSubtask}
+                    attributes={subtask.attributes}
+                />
+            )
+            : index == maxNoSubtask
+            ? ( <div> ... </div> )
+            : ( <div></div> )
+            
         )
-    }, [subtasks])
+    )}, [subtasks])
 
     return (
         <Card>

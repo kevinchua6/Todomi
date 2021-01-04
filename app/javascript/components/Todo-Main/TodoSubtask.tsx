@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 const SubtaskStyle = styled.div`
     padding: 0 5px 5px 5px;
     display: inline;
-
+    font-size: 20px;
     padding-top: 5px;
 `
 export interface TodoSubtask {
