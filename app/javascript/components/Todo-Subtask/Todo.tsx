@@ -61,10 +61,9 @@ const Todo = (props: TodoSubtaskProps) => {
     const [inputSubtasks, setInputSubtasks] = useState({text: '', done: false, todo_id: todo_id})
 
     useEffect( () => {
+        // On render gets the todo and subtask info of the specified id
         const url = `/api/v1/todos/${todo_id}`
-        
-        axios.get(url)
-        .then( 
+        axios.get(url).then( 
             resp => { 
                 setTodo(resp.data.data.attributes) 
                 // todo has {done:false, id: 1, title: "buy milk", urgency:3}
@@ -79,11 +78,10 @@ const Todo = (props: TodoSubtaskProps) => {
     const handleChangeTodo = (e: React.ChangeEvent<HTMLInputElement>) => { setTodo({...todo, title: e.target.value}) }
 
     useEffect( () => {
+        // Debounced saving of todo title
         if (loaded) {
             const url = `/api/v1/todos/${todo_id}`
-            
-            axios.patch(url, {title: todo.title})
-            .then( 
+            axios.patch(url, {title: todo.title}).then( 
                 resp => { 
                     console.log(resp)
                 }
@@ -93,19 +91,19 @@ const Todo = (props: TodoSubtaskProps) => {
     }, [debouncedTodo])
 
     const handleNewSubtaskKeypress = (e: React.KeyboardEvent<Element>) => {
+        // Does a post request of a new subtask upon pressing enter
         if (e.key === 'Enter') {
-            axios.post('/api/v1/subtasks', inputSubtasks)
-            .then (resp => {
+            axios.post('/api/v1/subtasks', inputSubtasks).then (resp => {
                 setSubtasks(subtasks.concat([resp.data.data]))
                 setInputSubtasks({...inputSubtasks, text: '', done: false})
             })
             .catch( resp => console.log(resp) )
         }
     }
-
     const handleNewSubtaskChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
     
     const updateSubtask = (id: string, done: boolean) => {
+        // When checkbox is clicked for a subtask, changes its done property
         setSubtasks(subtasks.map( subtask => 
             subtask.id === id
                 ? {...subtask, attributes: {...subtask.attributes, done: !done} }
@@ -114,7 +112,8 @@ const Todo = (props: TodoSubtaskProps) => {
         )
     }
 
-    useEffect( ()=> {
+    useEffect( () => {
+        // Arranges subtasks in order when `subtasks` is modified
         const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
         const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
 

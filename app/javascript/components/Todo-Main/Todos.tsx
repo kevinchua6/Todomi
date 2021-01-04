@@ -3,7 +3,7 @@ import axios from 'axios'
 import Todo from './Todo'
 import TodoInput from './TodoInput'
 import styled from 'styled-components'
-import Button from '@material-ui/core/Button'
+import Subtask from '../Todo-Subtask/Subtask'
 
 //Style
 const Home = styled.div`
@@ -12,7 +12,6 @@ const Home = styled.div`
     margin-left: auto;
     margin-right: auto;
 `
-
 const Header = styled.div`
     padding: 100px 100px 10px 100px;
 
@@ -20,12 +19,10 @@ const Header = styled.div`
         font-size: 45px;
     }
 `
-
 const Subheader = styled.div`
     font-weight: 300;
     font-size: 23px;
 `
-
 const Grid = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -33,8 +30,6 @@ const Grid = styled.div`
     width: 93%;
     padding: 30px;
 `
-
-
 export interface Todos {
     id: string,
     type: string,
@@ -77,21 +72,21 @@ const Todos = () => {
         .catch( resp => console.log(resp) )
     }, [])
 
-    // Sort via ascending order (Add a button to swap the order in the future)
-    const grid = todos.slice().reverse().map( myTodo => 
-         (
-            <Todo
-                key={myTodo.id} 
-                attributes={myTodo.attributes}
-            />
-        )
+    // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
+    const grid = todos.slice().reverse().map( todo => {
+            const todo_id: number = +todo.id
+            return (
+                <Todo
+                    key={todo_id} 
+                    attributes={todo.attributes}
+                />
+            )
+        }
     )
+    console.log(grid)
 
     const handleKeypress = (e: React.KeyboardEvent<Element>) => {
         if (e.key === 'Enter') {
-            // const csrfToken = document.querySelector('[name=csrf-token]').content
-            // axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
-
             axios.post('/api/v1/todos', inputTodo)
             .then (resp => {
                 setTodos(todos.concat(resp.data.data))
@@ -102,8 +97,6 @@ const Todos = () => {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
-
-
 
     return (
         <div>

@@ -9,26 +9,32 @@ import TextField from '@material-ui/core/TextField'
 
 const Wrapper = styled.div`
     padding-top: 10px;
+    text-align: left;
 `
+const SubtaskStyle = styled.div`
+    padding: 0 5px 5px 5px;
+    display: inline;
 
-export interface Subtask {
+    padding-top: 5px;
+`
+export interface TodoSubtask {
     id: string,
-    todo_id: number | undefined,
+    todo_id: number,
     updateSubtask: (id: string, done: boolean) => void,
     attributes: {
         text: string,
         done: boolean,
         todo_id: number
     }
-    loaded: boolean
 }
 
-const Subtask = (props: Subtask) => {
-    const {text, done, todo_id} = props.attributes
+
+
+const TodoSubtask = (props: TodoSubtask) => {
+
+    const {text, done} = props.attributes
 
     const [subtasktxt, setSubtasktxt] = useState(text)
-    const [debouncedSubtasktxt] = useDebounce(subtasktxt, 1000)
-
     const [subtaskBool, setSubtaskBool] = useState(done)
 
     const handleChangeCheckbox = () => { 
@@ -37,28 +43,17 @@ const Subtask = (props: Subtask) => {
     }
 
     useEffect( () => {
-        if (props.loaded) {
             const url = `/api/v1/subtasks/${props.id}`
 
             axios.patch(url, {done: subtaskBool})
             .then( resp =>  console.log(resp) )
             .catch( resp => console.log(resp) )
-        }
+
+            // 
     }, [subtaskBool])
 
-    const handleChangeSubtask = (e: React.ChangeEvent<HTMLInputElement>) => { setSubtasktxt(e.target.value) }
-    
-    useEffect( () => {
-        if (props.loaded) {
-            const url = `/api/v1/subtasks/${props.id}`
-            
-            axios.patch(url, {text: subtasktxt})
-            .then( resp =>  console.log(resp) )
-            .catch( resp => console.log(resp) )
-        }
-    }, [debouncedSubtasktxt])
-
-    
+    // TODO: when subtask is checked, put a strikethrough, make it transparent
+    // and put it to the bottom.
 
     return (
         <Wrapper>
@@ -70,24 +65,16 @@ const Subtask = (props: Subtask) => {
                 checked={subtaskBool}
                 color="primary"
             />
-            <TextField 
-                inputProps={{
-                    maxlength: 50,
-                    style: {
-                        textDecoration: subtaskBool ? "line-through" : "",
-                        opacity: subtaskBool ? 0.5 : 1
-                    }
+            <SubtaskStyle 
+                style= {{
+                    textDecoration: subtaskBool ? "line-through" : "",
+                    opacity: subtaskBool ? 0.5 : 1,
                 }}
-                style={{
-                    width: "91%",
-                }}
-                onChange={handleChangeSubtask} 
-                value={subtasktxt} 
-                type="text" 
-                name="title" 
-            />
+            >
+                {subtasktxt} 
+            </SubtaskStyle>
         </Wrapper>
     )
 }
 
-export default Subtask
+export default TodoSubtask
