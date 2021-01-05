@@ -28,7 +28,7 @@ const TodoInput = (props: TodoInput) => {
                     onChange = {props.handleChange}
                     onKeyPress={props.handleKeypress}
                     placeholder="Add a task" 
-                    maxLength={50} />
+                    maxLength={25} />
             </InputContainer>
     )
 }

@@ -22,7 +22,7 @@ const NewSubtask = (props: NewSubtask) => {
                 width: "100%",
                 height: "50%"
             }}
-            inputProps={{ maxlength: 50 }}
+            inputProps={{ maxLength: 25 }}
             variant="outlined"
             value = {props.inputSubtasks.text}
             onKeyPress = {props.handleNewSubtaskKeypress}

@@ -72,7 +72,7 @@ const Subtask = (props: Subtask) => {
             />
             <TextField 
                 inputProps={{
-                    maxlength: 50,
+                    maxLength: 25,
                     style: {
                         textDecoration: subtaskBool ? "line-through" : "",
                         opacity: subtaskBool ? 0.5 : 1

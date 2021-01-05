@@ -58,8 +58,9 @@ const TodoSubtask = (props: TodoSubtask) => {
     return (
         <Wrapper>
             <Checkbox 
+                name="subtaskCheckbox"
                 style={{
-                    paddingTop: 4
+                    paddingTop: 4,
                 }}
                 onChange={handleChangeCheckbox} 
                 checked={subtaskBool}

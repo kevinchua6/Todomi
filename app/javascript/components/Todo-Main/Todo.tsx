@@ -9,8 +9,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 import TodoSubtask from './TodoSubtask'
 import DoneIcon from '@material-ui/icons/Done'
 
-// const Card = styled(Link)`
 const Card = styled.div`
+
     transition: box-shadow .3s;
     border: 1px solid #efefef;
     background: #fff;
@@ -38,8 +38,6 @@ const ButtonPlaceholder = styled.div`
     margin-left: auto;
     margin-right: auto;
 `
-
-// TODO: Change the link wrapper to the entire card and the View Task button to be delete instead
 
 export interface Todo {
     attributes: {
@@ -84,7 +82,11 @@ const Todo = (props: Todo) => {
         )
     }
 
-
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+        if (e.target.name !== "subtaskCheckbox" && e.target.className !== "sc-dlfnbm iRLBpv") {
+            window.location.href = `/todos/${props.attributes.id}`
+        } 
+    }
 
     useEffect( ()=> {
         const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
@@ -117,14 +119,15 @@ const Todo = (props: Todo) => {
     }, [subtasks])
 
     return (
-        // <Card to={`/todos/${props.attributes.id}`}>
-        <Card key={todo_id}>
+        <Card onClick={handleClick}>
             <TodoTitle>{props.attributes.title}</TodoTitle>
+            {/* Todo: Change the color of the box when urgency changes */}
             {/* <div className="todo-urgency">{props.attributes.urgency}</div> */}
 
             {renderSubtasks}
 
             <Button
+            startIcon={<DoneIcon/>}
             style={{
                 backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",
                 margin: 15,
@@ -135,7 +138,7 @@ const Todo = (props: Todo) => {
                 textAlign: "center",
                 left: 0,
                 right: 0,
-                width: "70%",
+                width: "95%",
                 fontWeight: "bold"
             }}
             disabled={!buttonCompleted}

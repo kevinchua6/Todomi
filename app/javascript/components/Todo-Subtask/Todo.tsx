@@ -144,7 +144,7 @@ const Todo = (props: TodoSubtaskProps) => {
                             margin: 5,
                             marginBottom: 25
                         }}
-                        inputProps={{ maxlength: 50 }}
+                        inputProps={{ maxLength: 25 }}
                         variant="outlined"
                         onChange={handleChangeTodo} 
                         value={todo.title} 
