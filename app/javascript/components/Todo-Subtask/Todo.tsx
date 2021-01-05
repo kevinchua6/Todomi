@@ -141,9 +141,9 @@ const Todo = (props: TodoSubtaskProps) => {
                 <Link to="/">
                     <ArrowBackIcon
                     style={{
-                        width: "1.5em",
-                        height: "1.5em",
+                        fontSize: 48,
                         paddingBottom: 25,
+                        color: "black"
                     }} />
                 </Link>
                 <Title> Edit Task </Title>

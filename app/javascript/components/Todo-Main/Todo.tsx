@@ -10,7 +10,6 @@ import TodoSubtask from './TodoSubtask'
 import DoneIcon from '@material-ui/icons/Done'
 
 const Card = styled.div`
-
     transition: box-shadow .3s;
     border: 1px solid #efefef;
     background: #fff;
@@ -83,9 +82,11 @@ const Todo = (props: Todo) => {
     }
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-        if (e.target.name !== "subtaskCheckbox" && e.target.previousSibling.title !== "completeSubtaskButton") {
+        if (!e.target.previousSibling && e.target.name !== "subtaskCheckbox" ) {
             window.location.href = `/todos/${props.attributes.id}`
-        } 
+        } else if (e.target.previousSibling && e.target.previousSibling.title !== "completeSubtaskButton") {
+            window.location.href = `/todos/${props.attributes.id}`
+        }
     }
 
     useEffect( ()=> {

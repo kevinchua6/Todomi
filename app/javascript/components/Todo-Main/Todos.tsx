@@ -39,7 +39,9 @@ export interface Todos {
         title: string,
         done: boolean,
         urgency: number,
-        id: number
+        id: number,
+        tag: string,
+        order: number
     },
     relationships: {
         subtasks: {
@@ -104,7 +106,9 @@ const Todos = () => {
     }
 
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
-    const grid = todos.slice().reverse().map( todo => {
+    const grid = todos.slice()
+        .sort( (a, b) => (a.attributes.order > b.attributes.order ? 1 : -1))
+        .map( todo => {
             const todo_id: number = +todo.id
             return (
                 <Todo
