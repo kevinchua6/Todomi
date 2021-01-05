@@ -3,7 +3,8 @@ import axios from 'axios'
 import Todo from './Todo'
 import TodoInput from './TodoInput'
 import styled from 'styled-components'
-import Subtask from '../Todo-Subtask/Subtask'
+import { Subtasks } from '../Todo-Subtask/Todo'
+import debounce from '../../utils/debounce'
 
 //Style
 const Home = styled.div`
@@ -73,6 +74,35 @@ const Todos = () => {
         .catch( resp => console.log(resp) )
     }, [])
 
+    const handleDeleteTodo = (todo_id: string, subtasks: Subtasks[]) => {
+        const deleteTask = () => {
+            const url = `/api/v1/todos/${todo_id}`
+
+            axios.delete(url)
+            .then( resp => 
+                setTodos( todos.filter( todo => 
+                    todo.id != todo_id
+                ))
+             )
+            .catch( resp => console.log(resp) )
+        }
+
+        const debouncedDelete = debounce(deleteTask, 200)
+
+        if (subtasks.length !== 0) {
+            subtasks.forEach( subtask => {
+                const url = `/api/v1/subtasks/${subtask.id}`
+                axios.delete(url)
+                .then( resp => {
+                    debouncedDelete()
+                } )
+                .catch( resp => console.log(resp) )
+            })
+        } else {
+            deleteTask()
+        }
+    }
+
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
     const grid = todos.slice().reverse().map( todo => {
             const todo_id: number = +todo.id
@@ -80,6 +110,7 @@ const Todos = () => {
                 <Todo
                     key={todo_id} 
                     attributes={todo.attributes}
+                    handleDeleteTodo={handleDeleteTodo}
                 />
             )
         }
@@ -98,6 +129,8 @@ const Todos = () => {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
+
+
 
     return (
         <div>
