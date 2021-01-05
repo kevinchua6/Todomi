@@ -39,6 +39,11 @@ const LinkWrapper = styled.div`
         text-decoration: none;
     }
 `
+const Ellipsis = styled.div`
+    text-align: left;
+    margin-left: 50px;
+    margin-top: 6px;
+`
 
 // TODO: Change the link wrapper to the entire card and the View Task button to be delete instead
 
@@ -99,7 +104,7 @@ const Todo = (props: Todo) => {
                 />
             )
             : index == maxNoSubtask
-            ? ( <div> ... </div> )
+            ? ( <Ellipsis> ... </Ellipsis> )
             : ( <div></div> )
             
         )
