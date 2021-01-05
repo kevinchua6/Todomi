@@ -7,6 +7,7 @@ import Subtask from './Subtask'
 import NewSubtask from './NewSubtask'
 import TextField from '@material-ui/core/TextField'
 import { InputTodo } from '../Todo-Main/Todos'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const Card = styled.div `
     border: 1px solid rgba(0,0,0,0.1);
@@ -53,7 +54,7 @@ const Todo = (props: TodoSubtaskProps) => {
     
     const [todo, setTodo] = useState<InputTodo>({ title: "" })
 
-    const [debouncedTodo] = useDebounce(todo, 1000)
+    const [debouncedTodo] = useDebounce(todo, 100)
     const [subtasks, setSubtasks] = useState<Subtasks[]>([])
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([])
     const [loaded, setLoaded] = useState(false)
@@ -137,6 +138,14 @@ const Todo = (props: TodoSubtaskProps) => {
         {
             loaded && 
             <Wrapper>
+                <Link to="/">
+                    <ArrowBackIcon
+                    style={{
+                        width: "1.5em",
+                        height: "1.5em",
+                        paddingBottom: 25,
+                    }} />
+                </Link>
                 <Title> Edit Task </Title>
                     <TextField 
                         style= {{

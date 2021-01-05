@@ -83,7 +83,7 @@ const Todo = (props: Todo) => {
     }
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-        if (e.target.name !== "subtaskCheckbox" && e.target.className !== "sc-dlfnbm iRLBpv") {
+        if (e.target.name !== "subtaskCheckbox" && e.target.previousSibling.title !== "completeSubtaskButton") {
             window.location.href = `/todos/${props.attributes.id}`
         } 
     }
@@ -105,8 +105,8 @@ const Todo = (props: Todo) => {
                 />
             )
             : index == maxNoSubtask
-            ? ( <Ellipsis> ... </Ellipsis> )
-            : ( <div></div> )
+            ? ( <Ellipsis key={subtask.id}> ... </Ellipsis> )
+            : ( <div key={subtask.id}></div> )
         ))
 
         // If all the subtasks are done
@@ -127,6 +127,7 @@ const Todo = (props: Todo) => {
             {renderSubtasks}
 
             <Button
+            title="completeSubtaskButton"
             startIcon={<DoneIcon/>}
             style={{
                 backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",

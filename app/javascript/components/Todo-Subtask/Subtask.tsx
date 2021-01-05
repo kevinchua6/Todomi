@@ -27,7 +27,7 @@ const Subtask = (props: Subtask) => {
     const {text, done, todo_id} = props.attributes
 
     const [subtasktxt, setSubtasktxt] = useState(text)
-    const [debouncedSubtasktxt] = useDebounce(subtasktxt, 1000)
+    const [debouncedSubtasktxt] = useDebounce(subtasktxt, 100)
 
     const [subtaskBool, setSubtaskBool] = useState(done)
 

@@ -52,9 +52,6 @@ const TodoSubtask = (props: TodoSubtask) => {
             // 
     }, [subtaskBool])
 
-    // TODO: when subtask is checked, put a strikethrough, make it transparent
-    // and put it to the bottom.
-
     return (
         <Wrapper>
             <Checkbox 
