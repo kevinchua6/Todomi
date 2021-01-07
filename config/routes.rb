@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'tags/create'
+  get 'tags/destroy'
   namespace :api do
     get 'subtasks/index'
     get 'subtasks/create'
@@ -13,6 +15,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :todos
       resources :subtasks
+      resources :tags
     end
   end
 
