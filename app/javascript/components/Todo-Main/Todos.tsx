@@ -29,13 +29,6 @@ const Subheader = styled.div`
     font-size: 23px;
     padding-bottom: 10px;
 `
-const Grid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 20px;
-    width: 93%;
-    padding: 30px;
-`
 export interface Todos {
     id: string,
     type: string,
@@ -81,14 +74,6 @@ const Todos = () => {
         .then( resp => {
             setTodos(resp.data.data)
             setLoaded(true)
-
-            // Gets the length of all subtasks
-            // resp.data.data.map( (todo: Todos) => {
-            //     const url = `/api/v1/todos/${todo.id}`
-            //     console.log(todo.relationships.subtasks.data)
-            //     setSubtaskLength([...subtaskLength, todo.relationships.subtasks.data.length])
-            // })
-
         })
         .catch( resp => console.log(resp) )
     }, [])
@@ -131,24 +116,17 @@ const Todos = () => {
             let height: number
             switch (subtaskNo) {
                 case 0:
-                    height = 1.2
+                    height = 1
                     break
                 case 1:
-                    height = 1.65
-                    break
                 case 2:
-                    height = 1.8
-                    break
                 case 3:
-                    height = 2.2
-                    break;
+                    height = 2
+                    break
                 case 4:
-                    height = 2.55
-                    break
                 default:
-                    height = 3.05
+                    height = 3
                     break
-                
             }
 
             const todo_id: number = +todo.id
@@ -160,7 +138,7 @@ const Todos = () => {
                 <div key={todo_id} 
                 style={{
                     backgroundColor: "#91c5ff" }}
-                data-grid={{x: x*2, y: y, w: 2, h: height}} >
+                data-grid={{x: x, y: y, w: 1, h: height}} >
                 <Todo
                     attributes={todo.attributes}
                     handleDeleteTodo={handleDeleteTodo}
@@ -171,7 +149,7 @@ const Todos = () => {
     )
 
     const handleKeypress = (e: React.KeyboardEvent<Element>) => {
-        if (e.key === 'Enter') {
+        if (inputTodo.title !== "" && e.key === 'Enter') {
             axios.post('/api/v1/todos', inputTodo)
             .then (resp => {
                 setTodos(todos.concat(resp.data.data))
@@ -183,8 +161,6 @@ const Todos = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
 
-
-
     return (
         <div>
         { 
@@ -194,7 +170,7 @@ const Todos = () => {
                     <h1>Todo App</h1>
                     <Subheader>Simple todo list.</Subheader>
                 </Header>
-                <TodoInput 
+                <TodoInput
                     inputTodo = {inputTodo}
                     handleKeypress = {handleKeypress}
                     handleChange = {handleChange}
@@ -202,7 +178,8 @@ const Todos = () => {
                 <ResponsiveGridLayout
                 className="layout"
                 breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
-                cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}>
+                cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
+                >
                     {grid}
                 </ResponsiveGridLayout>
             </Home>

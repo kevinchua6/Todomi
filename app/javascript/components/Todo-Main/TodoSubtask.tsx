@@ -1,11 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import axios from 'axios'
-import { useDebounce } from 'use-debounce'
-import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { makeStyles } from '@material-ui/core/styles'
 import Checkbox from '@material-ui/core/Checkbox'
-import TextField from '@material-ui/core/TextField'
 
 const Wrapper = styled.div`
     padding-top: 10px;
