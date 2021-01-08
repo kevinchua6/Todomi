@@ -8,6 +8,7 @@ import { Subtasks } from '../Todo-Subtask/Todo'
 import Checkbox from '@material-ui/core/Checkbox'
 import TodoSubtask from './TodoSubtask'
 import DoneIcon from '@material-ui/icons/Done'
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
 
 const Card = styled.div`
     user-select: none;
@@ -162,13 +163,30 @@ const Todo = (props: Todo) => {
     return (
         <div>
             <TodoTitle>{props.attributes.title}</TodoTitle>
-            {/* Todo: Change the color of the box when urgency changes */}
-            {/* <div className="todo-urgency">{props.attributes.urgency}</div> */}
+            {/* Todo: Allow the color of the box to be changed */}
 
             {renderSubtasks}
+            <Button
+            href={`/todos/${props.attributes.id}`}
+            startIcon={<FormatListNumberedIcon/>}
+            style={{
+                backgroundColor: "rgb(204, 209, 255)",
+                margin: 15,
+                marginLeft: "auto",
+                marginRight: "auto",
+                position: "absolute",
+                bottom: 50,
+                textAlign: "center",
+                left: 0,
+                right: 0,
+                width: "95%",
+                fontWeight: "bold"
+            }}
+            variant="contained">
+                View Task
+            </Button>
 
             <Button
-            title="completeSubtaskButton"
             startIcon={<DoneIcon/>}
             style={{
                 backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",

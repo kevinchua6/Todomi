@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 const InputContainer = styled.div`
     padding: 10px;
+    padding-bottom: 55px;
 `
 
 const InputTodo = styled.input`

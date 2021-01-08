@@ -126,14 +126,41 @@ const Todos = () => {
     const grid = todos.slice()
         .sort( (a, b) => (a.attributes.id < b.attributes.id ? 1 : -1))
         .map( (todo, index) => {
+            const subtaskNo = todo.relationships.subtasks.data.length
+            // const height = subtaskNo >= 5 ? 3 : 1
+            let height: number
+            switch (subtaskNo) {
+                case 0:
+                    height = 1.2
+                    break
+                case 1:
+                    height = 1.65
+                    break
+                case 2:
+                    height = 1.8
+                    break
+                case 3:
+                    height = 2.2
+                    break;
+                case 4:
+                    height = 2.55
+                    break
+                default:
+                    height = 3.05
+                    break
+                
+            }
+
             const todo_id: number = +todo.id
 
             const columnNo = 5
             const x = index % columnNo
             const y = Math.floor(index/columnNo)
             return (
-                <div key={todo_id} style={{ backgroundColor: "#91c5ff" }}
-                data-grid={{x: x*2, y: y, w: 2, h: 3}} >
+                <div key={todo_id} 
+                style={{
+                    backgroundColor: "#91c5ff" }}
+                data-grid={{x: x*2, y: y, w: 2, h: height}} >
                 <Todo
                     attributes={todo.attributes}
                     handleDeleteTodo={handleDeleteTodo}
@@ -171,12 +198,10 @@ const Todos = () => {
                     inputTodo = {inputTodo}
                     handleKeypress = {handleKeypress}
                     handleChange = {handleChange}
-                    // attributes = {todos.data.attributes}
                 />
-
                 <ResponsiveGridLayout
                 className="layout"
-                breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+                breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
                 cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}>
                     {grid}
                 </ResponsiveGridLayout>
