@@ -10,16 +10,56 @@ import TodoSubtask from './TodoSubtask'
 import DoneIcon from '@material-ui/icons/Done'
 
 const Card = styled.div`
-    transition: box-shadow .3s;
-    border: 1px solid #efefef;
-    background: #fff;
-    text-align: center;
-    position: relative;
-
-    &:hover {
-        box-shadow: 0 0 11px rgba(33,33,33,.2);
-    }
+    user-select: none;
+    display: none;
+    position: absolute;
+    width: 95px;
+    height: 95px;
+    line-height: 95px;
+    margin: 10px;
+    z-index: 1;
+    cursor: pointer;
+    will-change: transform;
+    border-radius: 6px;
+    transition: box-shadow 0.2s;
+    border-top-right-radius: 20px;
 `
+const CardContent=styled.div`
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 300;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid;
+    color: #333;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -ms-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+`
+
+// const Card = styled.div`
+//     display: block;
+//     position: absolute;
+//     height: 500px;
+//     width: 200px;
+//     margin: 5px;
+//     z-index: 1;
+
+//     border: 1px solid #efefef;
+//     background: #fff;
+//     text-align: center;
+
+//     &:hover {
+//         box-shadow: 0 0 11px rgba(33,33,33,.2);
+//     }
+// `
 
 const TodoTitle = styled.div`
     padding: 20px 0 15px 0;
@@ -58,7 +98,6 @@ const Todo = (props: Todo) => {
 
     useEffect( () => {
         // Get Subtasks for each Todo
-        
         const url = `/api/v1/todos/${todo_id}`
 
         axios.get(url)
@@ -81,12 +120,13 @@ const Todo = (props: Todo) => {
         )
     }
 
+    // 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-        if (!e.target.previousSibling && e.target.name !== "subtaskCheckbox" ) {
-            window.location.href = `/todos/${props.attributes.id}`
-        } else if (e.target.previousSibling && e.target.previousSibling.title !== "completeSubtaskButton") {
-            window.location.href = `/todos/${props.attributes.id}`
-        }
+        // if (!e.target.previousSibling && e.target.name !== "subtaskCheckbox" ) {
+        //     window.location.href = `/todos/${props.attributes.id}`
+        // } else if (e.target.previousSibling && e.target.previousSibling.title !== "completeSubtaskButton") {
+        //     window.location.href = `/todos/${props.attributes.id}`
+        // }
     }
 
     useEffect( ()=> {
@@ -120,7 +160,7 @@ const Todo = (props: Todo) => {
     }, [subtasks])
 
     return (
-        <Card onClick={handleClick}>
+        <div>
             <TodoTitle>{props.attributes.title}</TodoTitle>
             {/* Todo: Change the color of the box when urgency changes */}
             {/* <div className="todo-urgency">{props.attributes.urgency}</div> */}
@@ -149,7 +189,7 @@ const Todo = (props: Todo) => {
                 Complete Task
             </Button>
             <ButtonPlaceholder/>
-        </Card>
+        </div>
     )
 }
 

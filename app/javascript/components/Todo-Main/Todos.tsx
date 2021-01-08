@@ -5,6 +5,10 @@ import TodoInput from './TodoInput'
 import styled from 'styled-components'
 import { Subtasks } from '../Todo-Subtask/Todo'
 import debounce from '../../utils/debounce'
+import { Responsive, WidthProvider } from "react-grid-layout"
+import './grid-styles.css'
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 //Style
 const Home = styled.div`
@@ -60,8 +64,13 @@ export interface InputTodo {
     urgency?: number
 }
 
+export interface SubtaskLength {
+    length: number
+}
+
 const Todos = () => {
     const [todos, setTodos] = useState<Todos[]>([])
+    const [subtaskLength, setSubtaskLength] = useState<SubtaskLength[]>([])
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" })
     const [loaded, setLoaded] = useState(false)
 
@@ -72,6 +81,14 @@ const Todos = () => {
         .then( resp => {
             setTodos(resp.data.data)
             setLoaded(true)
+
+            // Gets the length of all subtasks
+            // resp.data.data.map( (todo: Todos) => {
+            //     const url = `/api/v1/todos/${todo.id}`
+            //     console.log(todo.relationships.subtasks.data)
+            //     setSubtaskLength([...subtaskLength, todo.relationships.subtasks.data.length])
+            // })
+
         })
         .catch( resp => console.log(resp) )
     }, [])
@@ -107,19 +124,24 @@ const Todos = () => {
 
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
     const grid = todos.slice()
-        .sort( (a, b) => (a.attributes.order > b.attributes.order ? 1 : -1))
-        .map( todo => {
+        .sort( (a, b) => (a.attributes.id < b.attributes.id ? 1 : -1))
+        .map( (todo, index) => {
             const todo_id: number = +todo.id
+
+            const columnNo = 5
+            const x = index % columnNo
+            const y = Math.floor(index/columnNo)
             return (
+                <div key={todo_id} style={{ backgroundColor: "#91c5ff" }}
+                data-grid={{x: x*2, y: y, w: 2, h: 3}} >
                 <Todo
-                    key={todo_id} 
                     attributes={todo.attributes}
                     handleDeleteTodo={handleDeleteTodo}
                 />
+                </div>
             )
         }
     )
-    console.log(grid)
 
     const handleKeypress = (e: React.KeyboardEvent<Element>) => {
         if (e.key === 'Enter') {
@@ -152,9 +174,12 @@ const Todos = () => {
                     // attributes = {todos.data.attributes}
                 />
 
-                <Grid>
+                <ResponsiveGridLayout
+                className="layout"
+                breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+                cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}>
                     {grid}
-                </Grid>
+                </ResponsiveGridLayout>
             </Home>
         }
         </div>
