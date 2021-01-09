@@ -38,7 +38,8 @@ export interface Todos {
         urgency: number,
         id: number,
         tag: string,
-        order: number
+        order: number,
+        user_id: number
     },
     relationships: {
         subtasks: {
@@ -61,6 +62,10 @@ export interface SubtaskLength {
     length: number
 }
 
+export interface UserId {
+    user_id: number
+}
+
 const Todos = () => {
     const [todos, setTodos] = useState<Todos[]>([])
     const [subtaskLength, setSubtaskLength] = useState<SubtaskLength[]>([])
@@ -69,13 +74,24 @@ const Todos = () => {
 
     // Runs on first render
     useEffect( () => {
-        // Loads todos from API into `todos` state var
-        axios.get('/api/v1/todos')
-        .then( resp => {
-            setTodos(resp.data.data)
-            setLoaded(true)
+        // Gets user_id of the current session
+        axios.get('/user_id')
+        .then( (resp) => {
+            const user_id: number = resp.data.user_id
+            // Loads todos from API into `todos` state var
+            axios.get('/api/v1/todos')
+            .then( resp => {
+                setTodos(resp.data.data.filter( (todo: Todos) => todo.attributes.user_id === user_id))
+                setLoaded(true)
+            })
+            .catch( resp => console.log(resp) )
+
+
         })
         .catch( resp => console.log(resp) )
+
+
+
     }, [])
 
     const handleDeleteTodo = (todo_id: string, subtasks: Subtasks[]) => {

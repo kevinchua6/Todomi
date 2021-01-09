@@ -23,6 +23,7 @@ gem 'jbuilder', '~> 2.7'
 # gem 'bcrypt', '~> 3.1.7'
 gem 'jsonapi-serializer'
 # Use Active Storage variant
+gem 'devise'
 # gem 'image_processing', '~> 1.2'
 gem "nokogiri", ">= 1.11.0.rc4"
 
