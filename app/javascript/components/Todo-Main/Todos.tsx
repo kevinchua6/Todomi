@@ -83,7 +83,7 @@ const Todos = () => {
             // Loads todos from API into `todos` state var
             axios.get('/api/v1/todos')
             .then( resp => {
-                setTodos(resp.data.data.filter( (todo: Todos) => todo.attributes.user_id === user_id))
+                setTodos(resp.data.data.filter( (todo: Todos) => todo.attributes.user_id === user_id) )
                 setLoaded(true)
             })
             .catch( resp => console.log(resp) )
@@ -94,7 +94,7 @@ const Todos = () => {
 
 
 
-    }, [])
+    }, [] )
 
     const handleDeleteTodo = (todo_id: string, subtasks: Subtasks[]) => {
         const deleteTask = () => {
@@ -179,7 +179,7 @@ const Todos = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
     
-    const csrfToken = document.querySelector('[name=csrf-token]').content
+    const csrfToken = document.querySelector('[name=csrf-token]').getAttribute('content')
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
     
     return (
@@ -188,7 +188,7 @@ const Todos = () => {
             loaded && 
             <Home>
                 {/* Add a better way to log out */}
-                <Button 
+                <Button
                 variant="contained"
                 onClick={ () => { axios.delete(`/users/sign_out`)
                 .then(resp=>{ window.location.reload(false) })

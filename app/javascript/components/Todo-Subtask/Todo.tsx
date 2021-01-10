@@ -92,7 +92,7 @@ const Todo = (props: TodoSubtaskProps) => {
 
     const handleNewSubtaskKeypress = (e: React.KeyboardEvent<Element>) => {
         // Does a post request of a new subtask upon pressing enter
-        if (e.key === 'Enter') {
+        if (inputSubtasks.text !== "" && e.key === 'Enter') {
             axios.post('/api/v1/subtasks', inputSubtasks).then (resp => {
                 setSubtasks(subtasks.concat([resp.data.data]))
                 setInputSubtasks({...inputSubtasks, text: '', done: false})
@@ -100,6 +100,7 @@ const Todo = (props: TodoSubtaskProps) => {
             .catch( resp => console.log(resp) )
         }
     }
+    
     const handleNewSubtaskChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
     
     const updateSubtask = (id: string, done: boolean) => {
