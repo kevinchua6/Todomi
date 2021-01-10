@@ -21,7 +21,6 @@ const Description = styled.div `
 `
 const Wrapper = styled.div`
     padding-top: 110px;
-    height: 100vh;
     width: 55%;
     margin: auto;
 `

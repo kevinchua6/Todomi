@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Subtasks } from '../Todo-Subtask/Todo'
 import debounce from '../../utils/debounce'
 import { Responsive, WidthProvider } from "react-grid-layout"
+import Button from '@material-ui/core/Button'
 import './grid-styles.css'
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -29,6 +30,7 @@ const Subheader = styled.div`
     font-size: 23px;
     padding-bottom: 10px;
 `
+
 export interface Todos {
     id: string,
     type: string,
@@ -125,7 +127,7 @@ const Todos = () => {
 
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
     const grid = todos.slice()
-        .sort( (a, b) => (a.attributes.id < b.attributes.id ? 1 : -1))
+        .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1))
         .map( (todo, index) => {
             const subtaskNo = todo.relationships.subtasks.data.length
             // const height = subtaskNo >= 5 ? 3 : 1
@@ -176,12 +178,27 @@ const Todos = () => {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
-
+    
+    const csrfToken = document.querySelector('[name=csrf-token]').content
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+    
     return (
         <div>
         { 
             loaded && 
             <Home>
+                {/* Add a better way to log out */}
+                <Button 
+                variant="contained"
+                onClick={ () => { axios.delete(`/users/sign_out`)
+                .then(resp=>{ window.location.reload(false) })
+                .catch(resp=> window.location.reload(false)) }}
+                style={{
+                    position: "absolute",
+                    margin: 25,
+                    right: 10
+                }}
+                >Logout</Button>
                 <Header>
                     <h1>Todo App</h1>
                     <Subheader>Simple todo list.</Subheader>
@@ -191,6 +208,7 @@ const Todos = () => {
                     handleKeypress = {handleKeypress}
                     handleChange = {handleChange}
                 />
+                
                 <ResponsiveGridLayout
                 className="layout"
                 breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}

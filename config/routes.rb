@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
+
   get 'tags/create'
   get 'tags/destroy'
   namespace :api do

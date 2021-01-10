@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react'
+import AddIcon from '@material-ui/icons/Add';
 import styled from 'styled-components'
 
 const InputContainer = styled.div`
@@ -30,6 +31,7 @@ const TodoInput = (props: TodoInput) => {
                     onKeyPress={props.handleKeypress}
                     placeholder="Add a task" 
                     maxLength={25} />
+                    <AddIcon/>
             </InputContainer>
     )
 }

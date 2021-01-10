@@ -54,7 +54,7 @@ class Api::V1::TodosController < ApplicationController
     private
 
     def options
-        @options ||= { include: %i[subtasks] }
+        @options ||= { include: %i[tags subtasks] }
     end
 
     def todo_params

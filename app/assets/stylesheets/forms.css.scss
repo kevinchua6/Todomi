@@ -1,6 +1,5 @@
 .container {
     padding-top: 110px;
-    height: 100vh;
     width: 55%;
     margin: auto;
 }
@@ -41,3 +40,29 @@
 .actions {
     padding-bottom: 15px;
 }
+.alert {
+    animation: hideMe 10s 1;
+    animation-fill-mode: forwards;
+    animation-delay: 2s;
+    padding: .75rem 1.25rem;
+    position: relative;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #000;
+    background-color: #c46971;
+    border-color: #c40014;
+    text-align: center;
+  }
+  @keyframes hideMe {
+    0% {
+        opacity: 1;
+    }
+    75% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+  }
