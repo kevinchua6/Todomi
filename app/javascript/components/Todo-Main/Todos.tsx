@@ -8,7 +8,7 @@ import debounce from '../../utils/debounce'
 import { Responsive, WidthProvider } from "react-grid-layout"
 import Button from '@material-ui/core/Button'
 import Navbar from '../Shared/Navbar'
-import './grid-styles.css'
+import '../../../assets/stylesheets/grid-styles.css'
 import clsx from 'clsx';
 import { makeStyles, Theme, createStyles } from '@material-ui/core'
 
