@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button'
 import Navbar from '../Shared/Navbar'
 import './grid-styles.css'
 import clsx from 'clsx';
+import { makeStyles, Theme, createStyles } from '@material-ui/core'
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -76,11 +77,36 @@ export interface TodosProp {
     handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
+const drawerWidth = 240
+
+const useStyles = makeStyles((theme: Theme) =>
+createStyles({
+    contentShift: {
+        transition: theme.transitions.create('margin', {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+        marginLeft: 0,
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
+        transition: theme.transitions.create('margin', {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
+        marginLeft: -drawerWidth,
+      }
+ }
+))
+
 const Todos = (props: TodosProp) => {
     const [todos, setTodos] = useState<Todos[]>([])
     const [subtaskLength, setSubtaskLength] = useState<SubtaskLength[]>([])
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" })
     const [loaded, setLoaded] = useState(false)
+
+    const classes = useStyles();
 
     // Runs on first render
     useEffect( () => {
@@ -197,24 +223,24 @@ const Todos = (props: TodosProp) => {
                 handleDrawerOpen={props.handleDrawerOpen}
                 handleDrawerClose={props.handleDrawerClose}/>
 
-                <Home>
-                    
-                    <Header>
-                        <h1>Todo App</h1>
-                        <Subheader>Simple todo list.</Subheader>
-                    </Header>
-                    <TodoInput
-                        inputTodo = {inputTodo}
-                        handleKeypress = {handleKeypress}
-                        handleChange = {handleChange}
-                    />
-                    <ResponsiveGridLayout
-                    breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
-                    cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
-                    >
-                        {grid}
-                    </ResponsiveGridLayout>
-                </Home>
+                    <Home>
+                        
+                        <Header>
+                            <h1>Todo App</h1>
+                            <Subheader>Simple todo list.</Subheader>
+                        </Header>
+                        <TodoInput
+                            inputTodo = {inputTodo}
+                            handleKeypress = {handleKeypress}
+                            handleChange = {handleChange}
+                        />
+                        <ResponsiveGridLayout
+                        breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
+                        cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
+                        >
+                            {grid}
+                        </ResponsiveGridLayout>
+                    </Home>
             </div>
         }
         </div>
