@@ -6,13 +6,17 @@ const InputContainer = styled.div`
     padding: 10px;
     padding-bottom: 55px;
 `
-
 const InputTodo = styled.input`
     padding: 10px;
     width: 50%;
     border-radius: 25px;
     box-sizing: border-box;
 `
+const PlusSign = styled(AddIcon)({
+    verticalAlign: "middle",
+    paddingBottom: 8.5,
+    paddingLeft: 3
+})
 
 export interface TodoInput {
     inputTodo: {
@@ -31,7 +35,7 @@ const TodoInput = (props: TodoInput) => {
                     onKeyPress={props.handleKeypress}
                     placeholder="Add a task" 
                     maxLength={25} />
-                    <AddIcon/>
+                    <PlusSign/>
             </InputContainer>
     )
 }

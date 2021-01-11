@@ -26,7 +26,32 @@ const ButtonPlaceholder = styled.div`
     margin-left: auto;
     margin-right: auto;
 `
-
+const ViewTaskButton = styled(Button)( {
+    backgroundColor: "rgb(204, 209, 255)",
+    margin: 15,
+    marginLeft: "auto",
+    marginRight: "auto",
+    position: "absolute",
+    bottom: 50,
+    textAlign: "center",
+    left: 0,
+    right: 0,
+    width: "95%",
+    fontWeight: "bold"
+})
+const CompleteTaskButton = styled(Button)( {
+    
+    margin: 15,
+    marginLeft: "auto",
+    marginRight: "auto",
+    position: "absolute",
+    bottom: 0,
+    textAlign: "center",
+    left: 0,
+    right: 0,
+    width: "95%",
+    fontWeight: "bold"
+})
 export interface Todo {
     attributes: {
         title: string,
@@ -69,15 +94,6 @@ const Todo = (props: Todo) => {
         )
     }
 
-    // 
-    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-        // if (!e.target.previousSibling && e.target.name !== "subtaskCheckbox" ) {
-        //     window.location.href = `/todos/${props.attributes.id}`
-        // } else if (e.target.previousSibling && e.target.previousSibling.title !== "completeSubtaskButton") {
-        //     window.location.href = `/todos/${props.attributes.id}`
-        // }
-    }
-
     useEffect( ()=> {
         const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
         const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
@@ -108,34 +124,35 @@ const Todo = (props: Todo) => {
 
     }, [subtasks])
 
+
+
     return (
         <div>
             <TodoTitle>{props.attributes.title}</TodoTitle>
             {/* Todo: Allow the color of the box to be changed */}
 
             {renderSubtasks}
+            <Link to={`/todos/${props.attributes.id}`}>
+                <Button
+                startIcon={<FormatListNumberedIcon/>}
+                variant="contained"
+                style={{
+                    backgroundColor: "rgb(204, 209, 255)",
+                    margin: 15,
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    position: "absolute",
+                    bottom: 50,
+                    textAlign: "center",
+                    left: 0,
+                    right: 0,
+                    width: "95%",
+                    fontWeight: "bold"
+                }}>
+                    View Task
+                </Button>
+            </Link>
             <Button
-            href={`/todos/${props.attributes.id}`}
-            startIcon={<FormatListNumberedIcon/>}
-            style={{
-                backgroundColor: "rgb(204, 209, 255)",
-                margin: 15,
-                marginLeft: "auto",
-                marginRight: "auto",
-                position: "absolute",
-                bottom: 50,
-                textAlign: "center",
-                left: 0,
-                right: 0,
-                width: "95%",
-                fontWeight: "bold"
-            }}
-            variant="contained">
-                View Task
-            </Button>
-
-            <Button
-            startIcon={<DoneIcon/>}
             style={{
                 backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",
                 margin: 15,
@@ -149,6 +166,7 @@ const Todo = (props: Todo) => {
                 width: "95%",
                 fontWeight: "bold"
             }}
+            startIcon={<DoneIcon/>}
             disabled={!buttonCompleted}
             variant="contained"
             onClick= {() => props.handleDeleteTodo(todo_id, subtasks)}>

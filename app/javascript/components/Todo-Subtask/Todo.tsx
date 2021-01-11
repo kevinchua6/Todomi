@@ -8,6 +8,7 @@ import NewSubtask from './NewSubtask'
 import TextField from '@material-ui/core/TextField'
 import { InputTodo } from '../Todo-Main/Todos'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Navbar from '../Shared/Navbar'
 
 const Card = styled.div `
     border: 1px solid rgba(0,0,0,0.1);
@@ -36,7 +37,10 @@ export interface TodoSubtaskProps {
         params: {
             todo_id: string
         }
-    }
+    },
+    handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    open: boolean,
+    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 export interface Subtasks {
@@ -100,7 +104,7 @@ const Todo = (props: TodoSubtaskProps) => {
             .catch( resp => console.log(resp) )
         }
     }
-    
+
     const handleNewSubtaskChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
     
     const updateSubtask = (id: string, done: boolean) => {
@@ -137,6 +141,11 @@ const Todo = (props: TodoSubtaskProps) => {
         <div>
         {
             loaded && 
+            <div>
+            <Navbar                
+            open={props.open}
+            handleDrawerOpen={props.handleDrawerOpen}
+            handleDrawerClose={props.handleDrawerClose}/>
             <Wrapper>
                 <Link to="/">
                     <ArrowBackIcon
@@ -170,6 +179,7 @@ const Todo = (props: TodoSubtaskProps) => {
                         handleNewSubtaskChange={handleNewSubtaskChange}
                     />
             </Wrapper>
+            </div>
         }
         </div>
     )

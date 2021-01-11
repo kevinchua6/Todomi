@@ -7,7 +7,9 @@ import { Subtasks } from '../Todo-Subtask/Todo'
 import debounce from '../../utils/debounce'
 import { Responsive, WidthProvider } from "react-grid-layout"
 import Button from '@material-ui/core/Button'
+import Navbar from '../Shared/Navbar'
 import './grid-styles.css'
+import clsx from 'clsx';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -68,7 +70,13 @@ export interface UserId {
     user_id: number
 }
 
-const Todos = () => {
+export interface TodosProp {
+    handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    open: boolean,
+    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+}
+
+const Todos = (props: TodosProp) => {
     const [todos, setTodos] = useState<Todos[]>([])
     const [subtaskLength, setSubtaskLength] = useState<SubtaskLength[]>([])
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" })
@@ -87,13 +95,8 @@ const Todos = () => {
                 setLoaded(true)
             })
             .catch( resp => console.log(resp) )
-
-
         })
         .catch( resp => console.log(resp) )
-
-
-
     }, [] )
 
     const handleDeleteTodo = (todo_id: string, subtasks: Subtasks[]) => {
@@ -182,41 +185,37 @@ const Todos = () => {
     const csrfToken = document.querySelector('[name=csrf-token]').getAttribute('content')
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
     
+
+
     return (
         <div>
         { 
             loaded && 
-            <Home>
-                {/* Add a better way to log out */}
-                <Button
-                variant="contained"
-                onClick={ () => { axios.delete(`/users/sign_out`)
-                .then(resp=>{ window.location.reload(false) })
-                .catch(resp=> window.location.reload(false)) }}
-                style={{
-                    position: "absolute",
-                    margin: 25,
-                    right: 10
-                }}
-                >Logout</Button>
-                <Header>
-                    <h1>Todo App</h1>
-                    <Subheader>Simple todo list.</Subheader>
-                </Header>
-                <TodoInput
-                    inputTodo = {inputTodo}
-                    handleKeypress = {handleKeypress}
-                    handleChange = {handleChange}
-                />
-                
-                <ResponsiveGridLayout
-                className="layout"
-                breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
-                cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
-                >
-                    {grid}
-                </ResponsiveGridLayout>
-            </Home>
+            <div>
+                <Navbar
+                open={props.open}
+                handleDrawerOpen={props.handleDrawerOpen}
+                handleDrawerClose={props.handleDrawerClose}/>
+
+                <Home>
+                    
+                    <Header>
+                        <h1>Todo App</h1>
+                        <Subheader>Simple todo list.</Subheader>
+                    </Header>
+                    <TodoInput
+                        inputTodo = {inputTodo}
+                        handleKeypress = {handleKeypress}
+                        handleChange = {handleChange}
+                    />
+                    <ResponsiveGridLayout
+                    breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
+                    cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
+                    >
+                        {grid}
+                    </ResponsiveGridLayout>
+                </Home>
+            </div>
         }
         </div>
     )
