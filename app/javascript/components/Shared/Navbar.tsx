@@ -20,15 +20,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-
-
-const LogoutButton = styled(Button)( {
-    position: "absolute",
-    margin: 25,
-    right: 10,
-    backgroundColor: "#cbe4ff"
-})
-
 export interface Navbar {
   handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
   open: boolean,
@@ -190,13 +181,19 @@ const useStyles = makeStyles((theme: Theme) =>
           </div>
 
             {/* Add a better way to log out */}
-          <LogoutButton
+          <Button
+          style={{
+            position: "absolute",
+            margin: 25,
+            right: 10,
+            backgroundColor: "#cbe4ff"
+          }}
             variant="contained"
             onClick={ () => { axios.delete(`/users/sign_out`)
             .then(resp=>window.location.reload(false) )
             .catch(res=>window.location.reload(false)) }}>
                 Logout
-            </LogoutButton>
+            </Button>
         </Toolbar>
 
       </AppBar>
