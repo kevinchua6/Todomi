@@ -227,7 +227,6 @@ const Todos = (props: TodosProp) => {
                 />
 
                     <Home>
-                        
                         <Header>
                             <h1>Todo App</h1>
                             <Subheader>Simple todo list.</Subheader>
@@ -238,6 +237,7 @@ const Todos = (props: TodosProp) => {
                             handleChange = {handleChange}
                         />
                         <ResponsiveGridLayout
+                        rowHeight={190}
                         breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
                         cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
                         >
