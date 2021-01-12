@@ -9,17 +9,9 @@ import TextField from '@material-ui/core/TextField'
 import { InputTodo } from '../Todo-Main/Todos'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Navbar from '../Shared/Navbar'
+import clsx from 'clsx';
+import { makeStyles, Theme, createStyles } from '@material-ui/core'
 
-const Card = styled.div `
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 4px;
-    padding: 20px;
-    margin: 0 20px 20px 0;
-`
-const Description = styled.div `
-    padding: 0 0 20px 0;
-    font-size: 14px;
-`
 const Wrapper = styled.div`
     padding-top: 110px;
     width: 55%;
@@ -40,7 +32,9 @@ export interface TodoSubtaskProps {
     },
     handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
     open: boolean,
-    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    setSearchInput: React.Dispatch<React.SetStateAction<string>>,
+    searchInput: string
 }
 
 export interface Subtasks {
@@ -51,6 +45,32 @@ export interface Subtasks {
         todo_id: number
     }    
 }
+
+const drawerWidth = 240
+const padding = 120
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        content: {
+            flexGrow: 1,
+            padding: theme.spacing(3),
+            transition: theme.transitions.create('margin', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            marginLeft: -drawerWidth + padding,
+            paddingTop: 50
+          },
+          contentShift: {
+            transition: theme.transitions.create('margin', {
+              easing: theme.transitions.easing.easeOut,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+            marginLeft: padding,
+          },
+
+    }
+))
 
 const Todo = (props: TodoSubtaskProps) => {
     const {todo_id} = props.match.params
@@ -63,6 +83,9 @@ const Todo = (props: TodoSubtaskProps) => {
     const [loaded, setLoaded] = useState(false)
 
     const [inputSubtasks, setInputSubtasks] = useState({text: '', done: false, todo_id: todo_id})
+
+
+    const classes = useStyles();
 
     useEffect( () => {
         // On render gets the todo and subtask info of the specified id
@@ -145,39 +168,47 @@ const Todo = (props: TodoSubtaskProps) => {
             <Navbar                
             open={props.open}
             handleDrawerOpen={props.handleDrawerOpen}
-            handleDrawerClose={props.handleDrawerClose}/>
+            handleDrawerClose={props.handleDrawerClose}
+            setSearchInput={props.setSearchInput}
+            searchInput={props.searchInput}  
+            />
             <Wrapper>
-                <Link to="/">
-                    <ArrowBackIcon
-                    style={{
-                        fontSize: 48,
-                        paddingBottom: 25,
-                        color: "black"
-                    }} />
-                </Link>
-                <Title> Edit Task </Title>
-                    <TextField 
-                        style= {{
-                            width: "100%",
-                            margin: 5,
-                            marginBottom: 25
-                        }}
-                        inputProps={{ maxLength: 25 }}
-                        variant="outlined"
-                        onChange={handleChangeTodo} 
-                        value={todo.title} 
-                        type="text" 
-                        name="title" 
-                        label="Task"
-                    />
-                    <br/>
-                        {renderSubtasks}
-                    <br/>
-                    <NewSubtask
-                        inputSubtasks={inputSubtasks}
-                        handleNewSubtaskKeypress={handleNewSubtaskKeypress}
-                        handleNewSubtaskChange={handleNewSubtaskChange}
-                    />
+                <div
+                className={clsx(classes.content, {
+                    [classes.contentShift]: props.open,
+                })}>
+                    <Link to="/">
+                        <ArrowBackIcon
+                        style={{
+                            fontSize: 48,
+                            paddingBottom: 25,
+                            color: "black"
+                        }} />
+                    </Link>
+                    <Title> Edit Task </Title>
+                        <TextField 
+                            style= {{
+                                width: "100%",
+                                margin: 5,
+                                marginBottom: 25
+                            }}
+                            inputProps={{ maxLength: 25 }}
+                            variant="outlined"
+                            onChange={handleChangeTodo} 
+                            value={todo.title} 
+                            type="text" 
+                            name="title" 
+                            label="Task"
+                        />
+                        <br/>
+                            {renderSubtasks}
+                        <br/>
+                        <NewSubtask
+                            inputSubtasks={inputSubtasks}
+                            handleNewSubtaskKeypress={handleNewSubtaskKeypress}
+                            handleNewSubtaskChange={handleNewSubtaskChange}
+                        />
+                </div>
             </Wrapper>
             </div>
         }

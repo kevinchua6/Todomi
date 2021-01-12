@@ -1,29 +1,30 @@
-import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import styled from 'styled-components'
+import React, { useState, useEffect, Fragment } from 'react'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import IconButton from '@material-ui/core/IconButton'
+import InputBase from '@material-ui/core/InputBase'
+import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles'
+import MenuIcon from '@material-ui/icons/Menu'
+import SearchIcon from '@material-ui/icons/Search'
 import Button from '@material-ui/core/Button'
-import axios from 'axios';
-import clsx from 'clsx';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import axios from 'axios'
+import clsx from 'clsx'
+import Drawer from '@material-ui/core/Drawer'
+import List from '@material-ui/core/List'
+import Divider from '@material-ui/core/Divider'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import InboxIcon from '@material-ui/icons/MoveToInbox'
+import MailIcon from '@material-ui/icons/Mail'
 
 export interface Navbar {
   handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
   open: boolean,
-  handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+  setSearchInput: React.Dispatch<React.SetStateAction<string>>,
+  searchInput: string
 }
 
 const drawerWidth = 240
@@ -141,11 +142,10 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
   }),
-);
+)
 
  const Navbar = (props: Navbar) => {
   const classes = useStyles();
-  
   return (
     <div>
       <AppBar 
@@ -171,12 +171,14 @@ const useStyles = makeStyles((theme: Theme) =>
               <SearchIcon />
             </div>
             <InputBase
+              value = {props.searchInput}
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'search' }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>  props.setSearchInput(e.target.value) }
             />
           </div>
 

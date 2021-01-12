@@ -74,7 +74,9 @@ export interface UserId {
 export interface TodosProp {
     handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
     open: boolean,
-    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    setSearchInput: React.Dispatch<React.SetStateAction<string>>,
+    searchInput: string
 }
 
 const drawerWidth = 240
@@ -102,11 +104,8 @@ createStyles({
 
 const Todos = (props: TodosProp) => {
     const [todos, setTodos] = useState<Todos[]>([])
-    const [subtaskLength, setSubtaskLength] = useState<SubtaskLength[]>([])
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" })
     const [loaded, setLoaded] = useState(false)
-
-    const classes = useStyles();
 
     // Runs on first render
     useEffect( () => {
@@ -156,6 +155,7 @@ const Todos = (props: TodosProp) => {
 
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
     const grid = todos.slice()
+        .filter(todo => todo.attributes.title.includes(props.searchInput))
         .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1))
         .map( (todo, index) => {
             const subtaskNo = todo.relationships.subtasks.data.length
@@ -182,7 +182,7 @@ const Todos = (props: TodosProp) => {
             const x = index % columnNo
             const y = Math.floor(index/columnNo)
             return (
-                <div key={todo_id} 
+                <div key={index} 
                 style={{
                     backgroundColor: "#91c5ff" }}
                 data-grid={{x: x, y: y, w: 1, h: height}} >
@@ -221,7 +221,10 @@ const Todos = (props: TodosProp) => {
                 <Navbar
                 open={props.open}
                 handleDrawerOpen={props.handleDrawerOpen}
-                handleDrawerClose={props.handleDrawerClose}/>
+                handleDrawerClose={props.handleDrawerClose}
+                setSearchInput={props.setSearchInput}
+                searchInput={props.searchInput}  
+                />
 
                     <Home>
                         
