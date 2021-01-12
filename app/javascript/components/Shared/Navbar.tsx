@@ -184,7 +184,7 @@ const useStyles = makeStyles((theme: Theme) =>
           <Button
           style={{
             position: "absolute",
-            margin: 25,
+            marginRight: 25,
             right: 10,
             backgroundColor: "#cbe4ff"
           }}
