@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import styled from 'styled-components'
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
+import DoneIcon from '@material-ui/icons/Done'
 import Button from '@material-ui/core/Button'
 import Subtask from '../Todo-Subtask/Subtask'
 import axios from 'axios'
 import { Subtasks } from '../Todo-Subtask/Todo'
-import Checkbox from '@material-ui/core/Checkbox'
 import TodoSubtask from './TodoSubtask'
-import DoneIcon from '@material-ui/icons/Done'
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+import CardTags from './CardTags'
 
 const TodoTitle = styled.div`
     padding: 15px 0 15px 0;
@@ -26,33 +26,8 @@ const ButtonPlaceholder = styled.div`
     margin-left: auto;
     margin-right: auto;
 `
-const ViewTaskButton = styled(Button)( {
-    backgroundColor: "rgb(204, 209, 255)",
-    margin: 15,
-    marginLeft: "auto",
-    marginRight: "auto",
-    position: "absolute",
-    bottom: 50,
-    textAlign: "center",
-    left: 0,
-    right: 0,
-    width: "95%",
-    fontWeight: "bold"
-})
-const CompleteTaskButton = styled(Button)( {
-    
-    margin: 15,
-    marginLeft: "auto",
-    marginRight: "auto",
-    position: "absolute",
-    bottom: 0,
-    textAlign: "center",
-    left: 0,
-    right: 0,
-    width: "95%",
-    fontWeight: "bold"
-})
-export interface Todo {
+
+interface Todo {
     attributes: {
         title: string,
         done: boolean,
@@ -62,6 +37,26 @@ export interface Todo {
     handleDeleteTodo: (todo_id: string, subtasks: Subtasks[]) => void 
 }
 
+interface Subtask {
+    id: string,
+    type: string,
+    attributes: {
+        text: string,
+        done: boolean,
+        todo_id: number
+    }    
+}
+
+interface Tag {
+    id: string,
+    name: string,
+    type: string,
+    attributes: {
+        name: string,
+        todo_id: number
+    }
+}
+
 const Todo = (props: Todo) => {
     const todo_id: string = "" + props.attributes.id
 
@@ -69,22 +64,30 @@ const Todo = (props: Todo) => {
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([])
 
     const [buttonCompleted, setButtonCompleted] = useState(false)
+    const [tags, setTags] = useState<Tag[]>([])
 
-    useEffect( () => {
-        // Get Subtasks for each Todo
-        const url = `/api/v1/todos/${todo_id}`
 
-        axios.get(url)
-        .then( 
-            resp => { 
-                console.log(resp)
-                const newSubtasks = resp.data.included.filter((subtask: { type: string }) => subtask.type === 'subtask')
-                setSubtasks(newSubtasks)
-                // subtasks are an object with {1:{id:1,attributes..}, 2:{}}
-            }
-        )
-        .catch( resp => console.log(resp) )
-    
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+
+
+
+    useEffect(() => {
+
+        window.addEventListener('resize', () => 
+            setScreenWidth(window.innerWidth)
+        );
+
+        // Experimenting with async functions to make code look nicer
+        
+        (async () => {
+            // Get Subtasks for each Todo
+            const url = `/api/v1/todos/${todo_id}`
+            const rawData = await axios.get(url).then(resp => resp.data)
+            const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask')
+            const newTagsArr = rawData.included.filter( (tag: Tag) => tag.type === 'tag').map( (tag: Tag) => ({ id: tag.id, name: tag.attributes.name }))
+            setSubtasks(newSubtasks)
+            setTags(newTagsArr)
+        })()
     }, [])
 
     const updateSubtask = (id: string, done: boolean) => {
@@ -126,7 +129,10 @@ const Todo = (props: Todo) => {
 
     }, [subtasks])
 
-
+    const tagHandleDelete = async (tagId:string) => {
+        await axios.delete(`/api/v1/tags/${tagId}`)
+        setTags(tags.filter(x=>x.id !== tagId))
+    }
 
     return (
         <div>
@@ -134,45 +140,52 @@ const Todo = (props: Todo) => {
             {/* Todo: Allow the color of the box to be changed */}
 
             {renderSubtasks}
+            
+            <CardTags
+                screenWidth={screenWidth}
+                tags={tags}
+                handleDelete={tagHandleDelete}
+            />
+
             <Link to={`/todos/${props.attributes.id}`}>
                 <Button
-                startIcon={<FormatListNumberedIcon/>}
-                variant="contained"
+                    startIcon={<FormatListNumberedIcon/>}
+                    variant="contained"
+                    style={{
+                        backgroundColor: "rgb(204, 209, 255)",
+                        margin: 15,
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        position: "absolute",
+                        bottom: 50,
+                        textAlign: "center",
+                        left: 0,
+                        right: 0,
+                        width: "95%",
+                        fontWeight: "bold"
+                    }}>
+                        View Task
+                </Button>
+            </Link>
+            <Button
                 style={{
-                    backgroundColor: "rgb(204, 209, 255)",
+                    backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",
                     margin: 15,
                     marginLeft: "auto",
                     marginRight: "auto",
                     position: "absolute",
-                    bottom: 50,
+                    bottom: 0,
                     textAlign: "center",
                     left: 0,
                     right: 0,
                     width: "95%",
                     fontWeight: "bold"
-                }}>
-                    View Task
-                </Button>
-            </Link>
-            <Button
-            style={{
-                backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",
-                margin: 15,
-                marginLeft: "auto",
-                marginRight: "auto",
-                position: "absolute",
-                bottom: 0,
-                textAlign: "center",
-                left: 0,
-                right: 0,
-                width: "95%",
-                fontWeight: "bold"
-            }}
-            startIcon={<DoneIcon/>}
-            disabled={!buttonCompleted}
-            variant="contained"
-            onClick= {() => props.handleDeleteTodo(todo_id, subtasks)}>
-                Complete Task
+                }}
+                startIcon={<DoneIcon/>}
+                disabled={!buttonCompleted}
+                variant="contained"
+                onClick= {() => props.handleDeleteTodo(todo_id, subtasks)}>
+                    Complete Task
             </Button>
             <ButtonPlaceholder/>
         </div>

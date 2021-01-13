@@ -22,21 +22,21 @@ const App = () => {
         <Switch>
             <Route exact path="/" render={(props) => ( 
                 <Todos {...props} 
-                open={open} 
-                handleDrawerOpen={handleDrawerOpen}
-                handleDrawerClose={handleDrawerClose}
-                setSearchInput={setSearchInput}
-                searchInput={searchInput}  
+                  open={open} 
+                  handleDrawerOpen={handleDrawerOpen}
+                  handleDrawerClose={handleDrawerClose}
+                  setSearchInput={setSearchInput}
+                  searchInput={searchInput}  
                 />)}
               />
 
             <Route exact path="/todos/:todo_id"  render={(props) => ( 
                 <Todo {...props} 
-                open={open} 
-                handleDrawerOpen={handleDrawerOpen}
-                handleDrawerClose={handleDrawerClose}
-                setSearchInput={setSearchInput}
-                searchInput={searchInput}
+                  open={open} 
+                  handleDrawerOpen={handleDrawerOpen}
+                  handleDrawerClose={handleDrawerClose}
+                  setSearchInput={setSearchInput}
+                  searchInput={searchInput}
                 />)}
             />
         </Switch>

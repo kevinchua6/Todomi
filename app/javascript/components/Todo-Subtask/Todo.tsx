@@ -160,11 +160,11 @@ const Todo = (props: TodoSubtaskProps) => {
     return (
         <div>
             <Navbar                
-            open={props.open}
-            handleDrawerOpen={props.handleDrawerOpen}
-            handleDrawerClose={props.handleDrawerClose}
-            setSearchInput={props.setSearchInput}
-            searchInput={props.searchInput}  
+                open={props.open}
+                handleDrawerOpen={props.handleDrawerOpen}
+                handleDrawerClose={props.handleDrawerClose}
+                setSearchInput={props.setSearchInput}
+                searchInput={props.searchInput}  
             />
             <Wrapper>
                 <div

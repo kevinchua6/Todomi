@@ -6,10 +6,8 @@ import styled from 'styled-components'
 import { Subtasks } from '../Todo-Subtask/Todo'
 import debounce from '../../utils/debounce'
 import { Responsive, WidthProvider } from "react-grid-layout"
-import Button from '@material-ui/core/Button'
 import Navbar from '../Shared/Navbar'
 import '../../../assets/stylesheets/grid-styles.css'
-import clsx from 'clsx';
 import { makeStyles, Theme, createStyles } from '@material-ui/core'
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -238,11 +236,11 @@ const Todos = (props: TodosProp) => {
                         { 
                             loaded && 
                             <ResponsiveGridLayout
-                            rowHeight={190}
-                            breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
-                            cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
-                            >
-                                {grid}
+                                rowHeight={190}
+                                breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
+                                cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
+                                >
+                                    {grid}
                             </ResponsiveGridLayout>
                         }
                     </Home>
