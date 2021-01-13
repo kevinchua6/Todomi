@@ -42,7 +42,6 @@ const TodoSubtask = (props: TodoSubtask) => {
             const url = `/api/v1/subtasks/${props.id}`
 
             axios.patch(url, {done: subtaskBool})
-            .then( resp =>  console.log(resp) )
             .catch( resp => console.log(resp) )
 
             // 

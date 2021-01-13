@@ -1,4 +1,4 @@
-const debounce = (fn: { (...args): any }, time: number) => {
+const debounce = (fn: { (...args: any): any }, time: number) => {
     let timeout: NodeJS.Timeout
 
     return async (...args: any) => {

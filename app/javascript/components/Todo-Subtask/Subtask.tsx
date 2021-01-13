@@ -41,7 +41,6 @@ const Subtask = (props: Subtask) => {
             const url = `/api/v1/subtasks/${props.id}`
 
             axios.patch(url, {done: subtaskBool})
-            .then( resp =>  console.log(resp) )
             .catch( resp => console.log(resp) )
         }
     }, [subtaskBool])
@@ -53,7 +52,6 @@ const Subtask = (props: Subtask) => {
             const url = `/api/v1/subtasks/${props.id}`
             
             axios.patch(url, {text: subtasktxt})
-            .then( resp =>  console.log(resp) )
             .catch( resp => console.log(resp) )
         }
     }, [debouncedSubtasktxt])

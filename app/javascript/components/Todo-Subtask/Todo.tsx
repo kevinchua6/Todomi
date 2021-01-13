@@ -108,11 +108,7 @@ const Todo = (props: TodoSubtaskProps) => {
         // Debounced saving of todo title
         if (loaded) {
             const url = `/api/v1/todos/${todo_id}`
-            axios.patch(url, {title: todo.title}).then( 
-                resp => { 
-                    console.log(resp)
-                }
-            )
+            axios.patch(url, {title: todo.title})
             .catch( resp => console.log(resp) )
         }
     }, [debouncedTodo])
@@ -142,8 +138,9 @@ const Todo = (props: TodoSubtaskProps) => {
 
     useEffect( () => {
         // Arranges subtasks in order when `subtasks` is modified
-        const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
-        const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1))
+        const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (+a.id > +b.id ? 1 : -1))
+        const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (+a.id > +b.id ? 1 : -1))
+        console.log(undoneSubtasks)
 
         setRenderSubtasks([...undoneSubtasks, ...doneSubtasks].map( subtask => {
                 return (
@@ -162,9 +159,6 @@ const Todo = (props: TodoSubtaskProps) => {
 
     return (
         <div>
-        {
-            loaded && 
-            <div>
             <Navbar                
             open={props.open}
             handleDrawerOpen={props.handleDrawerOpen}
@@ -201,7 +195,9 @@ const Todo = (props: TodoSubtaskProps) => {
                             label="Task"
                         />
                         <br/>
-                            {renderSubtasks}
+                        {
+                            loaded && renderSubtasks
+                        }
                         <br/>
                         <NewSubtask
                             inputSubtasks={inputSubtasks}
@@ -210,8 +206,6 @@ const Todo = (props: TodoSubtaskProps) => {
                         />
                 </div>
             </Wrapper>
-            </div>
-        }
         </div>
     )
 }

@@ -215,8 +215,7 @@ const Todos = (props: TodosProp) => {
 
     return (
         <div>
-        { 
-            loaded && 
+
             <div>
                 <Navbar
                 open={props.open}
@@ -236,16 +235,18 @@ const Todos = (props: TodosProp) => {
                             handleKeypress = {handleKeypress}
                             handleChange = {handleChange}
                         />
-                        <ResponsiveGridLayout
-                        rowHeight={190}
-                        breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
-                        cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
-                        >
-                            {grid}
-                        </ResponsiveGridLayout>
+                        { 
+                            loaded && 
+                            <ResponsiveGridLayout
+                            rowHeight={190}
+                            breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
+                            cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
+                            >
+                                {grid}
+                            </ResponsiveGridLayout>
+                        }
                     </Home>
             </div>
-        }
         </div>
     )
 }

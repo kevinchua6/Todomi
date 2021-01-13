@@ -77,7 +77,9 @@ const Todo = (props: Todo) => {
         axios.get(url)
         .then( 
             resp => { 
-                setSubtasks(resp.data.included)
+                console.log(resp)
+                const newSubtasks = resp.data.included.filter((subtask: { type: string }) => subtask.type === 'subtask')
+                setSubtasks(newSubtasks)
                 // subtasks are an object with {1:{id:1,attributes..}, 2:{}}
             }
         )
