@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
 ))
 
-const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, setTags, match, sidebarAllTodoHandleClick} ) => {
+const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, setTags, match, sidebarAllTodoHandleClick, sidebarHandleOnClick} ) => {
     const {todo_id} = match.params;
     
     const [todo, setTodo] = useState<InputTodo>({ title: "" });
@@ -211,7 +211,7 @@ const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, set
 
                 items={ tagsChkbox }
                 allTodoHandleClick={sidebarAllTodoHandleClick}
-                handleClick={setTagsChkbox}
+                handleClick={sidebarHandleOnClick}
             />
             <Wrapper>
                 <div className={clsx(classes.content)}>

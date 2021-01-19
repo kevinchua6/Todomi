@@ -25,7 +25,10 @@ const App = () => {
       }
       setTagsChkbox(newTagsChkbox)
   }
-
+    const sidebarHandleOnClick = (tagState: React.SetStateAction<{}> ) => { 
+      setTagsChkbox({ ...tagsChkbox, ...tagState }) 
+      // console.log(tagsChkbox)
+  }
 
     // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => { setSearchInput({title: e.target.value}) }
 
@@ -42,6 +45,7 @@ const App = () => {
                   setTags={setTags}
 
                   sidebarAllTodoHandleClick={sidebarAllTodoHandleClick}
+                  sidebarHandleOnClick={sidebarHandleOnClick}
                 />)}
               />
 
@@ -56,6 +60,7 @@ const App = () => {
                   setTags={setTags}
 
                   sidebarAllTodoHandleClick={sidebarAllTodoHandleClick}
+                  sidebarHandleOnClick={sidebarHandleOnClick}
                 />)}
             />
         </Switch>

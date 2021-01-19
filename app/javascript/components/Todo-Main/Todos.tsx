@@ -107,9 +107,10 @@ export interface TodosI {
     tags: any[]
     setTags: React.Dispatch<React.SetStateAction<any[]>>
     sidebarAllTodoHandleClick: () => void
+    sidebarHandleOnClick: (tagState: React.SetStateAction<{}>) => void
 }
 
-const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, setTags, sidebarAllTodoHandleClick}: TodosI) => {
+const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, setTags, sidebarAllTodoHandleClick, sidebarHandleOnClick}: TodosI) => {
     const [todos, setTodos] = useState<Todos[]>([])
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" })
     const [loaded, setLoaded] = useState(false)
@@ -247,11 +248,6 @@ const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, se
     }
 
     const inputTodoHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}) }
-
-    const sidebarHandleOnClick = (tagState: React.SetStateAction<{}> ) => { 
-        setTagsChkbox({ ...tagsChkbox, ...tagState }) 
-        // console.log(tagsChkbox)
-    }
 
     const csrfToken = document.querySelector('[name=csrf-token]').getAttribute('content')
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
