@@ -72,23 +72,24 @@ const Todo = (props: Todo) => {
 
 
     useEffect(() => {
-
         window.addEventListener('resize', () => 
             setScreenWidth(window.innerWidth)
         );
 
         // Experimenting with async functions to make code look nicer
-        
         (async () => {
             // Get Subtasks for each Todo
-            const url = `/api/v1/todos/${todo_id}`
-            const rawData = await axios.get(url).then(resp => resp.data)
-            const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask')
-            const newTagsArr = rawData.included.filter( (tag: Tag) => tag.type === 'tag').map( (tag: Tag) => ({ id: tag.id, name: tag.attributes.name }))
-            setSubtasks(newSubtasks)
-            setTags(newTagsArr)
-        })()
-    }, [])
+            const url = `/api/v1/todos/${todo_id}`;
+            const { data: rawData } = await axios.get(url);
+            const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask');
+            const newTags = rawData.included.filter( (tag: Tag) => tag.type === 'tag')
+                .map( (tag: Tag) => ({ 
+                    id: tag.id, name: tag.attributes.name 
+                }));
+            setSubtasks(newSubtasks);
+            setTags(newTags);
+        })();
+    }, []);
 
     const updateSubtask = (id: string, done: boolean) => {
         setSubtasks(subtasks.map( subtask => 
@@ -129,10 +130,12 @@ const Todo = (props: Todo) => {
 
     }, [subtasks])
 
-    const tagHandleDelete = async (tagId:string) => {
-        await axios.delete(`/api/v1/tags/${tagId}`)
-        setTags(tags.filter(x=>x.id !== tagId))
+    const tagHandleDelete = (tagId: string) => {
+        axios.delete(`/api/v1/tags/${tagId}`).then(
+            resp => setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+        )
     }
+
 
     return (
         <div>

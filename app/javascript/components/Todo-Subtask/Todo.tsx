@@ -11,9 +11,10 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Navbar from '../Shared/Navbar'
 import clsx from 'clsx';
 import { makeStyles, Theme, createStyles } from '@material-ui/core'
+import Tags from './Tags'
 
 const Wrapper = styled.div`
-    padding-top: 110px;
+    padding-top: 90px;
     width: 55%;
     margin: auto;
 `
@@ -24,17 +25,15 @@ const Title = styled.div`
     font-weight: bold;
 `
 
-export interface TodoSubtaskProps {
-    match: {
-        params: {
-            todo_id: string
-        }
-    },
-    handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-    open: boolean,
-    handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-    setSearchInput: React.Dispatch<React.SetStateAction<string>>,
-    searchInput: string
+
+interface Subtask {
+    id: string,
+    type: string,
+    attributes: {
+        text: string,
+        done: boolean,
+        todo_id: number
+    }    
 }
 
 export interface Subtasks {
@@ -44,6 +43,32 @@ export interface Subtasks {
         done: boolean,
         todo_id: number
     }    
+}
+
+interface Tag {
+    id: string,
+    name: string,
+    type: string,
+    attributes: {
+        name: string,
+        todo_id: number
+    }
+}
+
+interface TodoSubtaskI {
+    match: {
+        params: {
+            todo_id: string
+        }
+    },
+    setSearchInput: React.Dispatch<React.SetStateAction<string>>,
+    searchInput: string
+
+    tagsChkbox: any
+    setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
+    tags: any[]
+    setTags: React.Dispatch<React.SetStateAction<any[]>>
+    sidebarAllTodoHandleClick: () => void
 }
 
 const drawerWidth = 240
@@ -58,7 +83,6 @@ const useStyles = makeStyles((theme: Theme) =>
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
-            marginLeft: -drawerWidth + padding,
             paddingTop: 50
           },
           contentShift: {
@@ -72,46 +96,50 @@ const useStyles = makeStyles((theme: Theme) =>
     }
 ))
 
-const Todo = (props: TodoSubtaskProps) => {
-    const {todo_id} = props.match.params
+const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, setTags, match, sidebarAllTodoHandleClick} ) => {
+    const {todo_id} = match.params;
     
-    const [todo, setTodo] = useState<InputTodo>({ title: "" })
+    const [todo, setTodo] = useState<InputTodo>({ title: "" });
 
-    const [debouncedTodo] = useDebounce(todo, 100)
-    const [subtasks, setSubtasks] = useState<Subtasks[]>([])
-    const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([])
-    const [loaded, setLoaded] = useState(false)
+    const [debouncedTodo] = useDebounce(todo, 100);
+    const [subtasks, setSubtasks] = useState<Subtasks[]>([]);
+    const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
+    const [loaded, setLoaded] = useState(false);
 
-    const [inputSubtasks, setInputSubtasks] = useState({text: '', done: false, todo_id: todo_id})
+    const [inputSubtasks, setInputSubtasks] = useState({text: '', done: false, todo_id: todo_id});
+    const [inputTag, setInputTag] = useState({name: '', todo_id: todo_id});
 
 
     const classes = useStyles();
 
     useEffect( () => {
         // On render gets the todo and subtask info of the specified id
-        const url = `/api/v1/todos/${todo_id}`
-        axios.get(url).then( 
-            resp => { 
-                setTodo(resp.data.data.attributes) 
-                // todo has {done:false, id: 1, title: "buy milk", urgency:3}
-                setSubtasks(resp.data.included)
-                // subtasks are an array of objects with [{id:"1", type:"subtask", attributes:{}}]
-                setLoaded(true)
-            }
-        )
-        .catch( resp => console.log(resp) )
-    }, [])
+        const url = `/api/v1/todos/${todo_id}`;
 
-    const handleChangeTodo = (e: React.ChangeEvent<HTMLInputElement>) => { setTodo({...todo, title: e.target.value}) }
+        (async () => {
+            const url = `/api/v1/todos/${todo_id}`
+            const { data: rawData } = await axios.get(url)
+            console.log(rawData)
+            setTodo(rawData.data.attributes) 
+            const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask')
+            const newTagsArr = rawData.included.filter( (tag: Tag) => tag.type === 'tag')
+            setSubtasks(newSubtasksArr);
+            setTags(newTagsArr);
+            setLoaded(true);
+        })();
+
+    }, []);
+
+    const handleChangeTodo = (e: React.ChangeEvent<HTMLInputElement>) => { setTodo({...todo, title: e.target.value}); };
 
     useEffect( () => {
         // Debounced saving of todo title
         if (loaded) {
-            const url = `/api/v1/todos/${todo_id}`
+            const url = `/api/v1/todos/${todo_id}`;
             axios.patch(url, {title: todo.title})
-            .catch( resp => console.log(resp) )
+            .catch( resp => console.log(resp) );
         }
-    }, [debouncedTodo])
+    }, [debouncedTodo]);
 
     const handleNewSubtaskKeypress = (e: React.KeyboardEvent<Element>) => {
         // Does a post request of a new subtask upon pressing enter
@@ -157,20 +185,44 @@ const Todo = (props: TodoSubtaskProps) => {
         )
     }, [loaded, subtasks])
 
+    const handleTagDelete = (tagId: string) => {
+        axios.delete(`/api/v1/tags/${tagId}`).then( (resp) =>
+            setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+        )
+    }
+
+    const handleNewTagChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTag({ ...inputTag, name: e.target.value }) }
+
+    const handleNewTagKeypress = (e: React.KeyboardEvent<Element>) => {
+        if (inputTag.name !== "" && e.key === 'Enter' || e.key === 'Tab') {
+            axios.post('/api/v1/tags', inputTag).then (resp => {
+                setTags(tags.concat([resp.data.data]))
+                setInputTag({...inputTag, name: '' })
+            })
+            .catch( resp => console.log(resp) )
+        }
+    }
+
     return (
         <div>
             <Navbar                
-                open={props.open}
-                handleDrawerOpen={props.handleDrawerOpen}
-                handleDrawerClose={props.handleDrawerClose}
-                setSearchInput={props.setSearchInput}
-                searchInput={props.searchInput}  
+                setSearchInput={setSearchInput}
+                searchInput={searchInput}
+
+                items={ tagsChkbox }
+                allTodoHandleClick={sidebarAllTodoHandleClick}
+                handleClick={setTagsChkbox}
             />
             <Wrapper>
-                <div
-                className={clsx(classes.content, {
-                    [classes.contentShift]: props.open,
-                })}>
+                <div className={clsx(classes.content)}>
+                    <Tags
+                        handleDelete={handleTagDelete}
+                        handleChange={handleNewTagChange}
+                        handleKeypress={handleNewTagKeypress}
+                        // handleClick={tagHandleClick}
+                        inputTag={inputTag}
+                        tags={tags}
+                    />
                     <Link to="/">
                         <ArrowBackIcon
                         style={{

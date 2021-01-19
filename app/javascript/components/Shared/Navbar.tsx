@@ -1,241 +1,209 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import InputBase from '@material-ui/core/InputBase'
+import { AppBar, Toolbar, IconButton, InputBase, Button, Drawer, Checkbox,
+    List, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles'
-import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
-import Button from '@material-ui/core/Button'
 import axios from 'axios'
 import clsx from 'clsx'
-import Drawer from '@material-ui/core/Drawer'
-import List from '@material-ui/core/List'
-import Divider from '@material-ui/core/Divider'
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import MailIcon from '@material-ui/icons/Mail'
+import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark'
+
+export interface TagStates extends Record<string, boolean> {}
 
 export interface Navbar {
-  handleDrawerOpen: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-  open: boolean,
-  handleDrawerClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-  setSearchInput: React.Dispatch<React.SetStateAction<string>>,
-  searchInput: string
+    searchInput: string
+    setSearchInput: React.Dispatch<React.SetStateAction<string>>,
+    
+    items: TagStates,
+    handleClick: (tagState: TagStates) => void,
+    allTodoHandleClick: () => void
 }
 
 const drawerWidth = 240
 
 const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    appBar: {
-      top:0,
-      left:0,
-      backgroundColor: "rgb(91, 169, 255)",
-      transition: theme.transitions.create(['margin', 'width'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-      transition: theme.transitions.create(['margin', 'width'], {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    hide: {
-      display: 'none'
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    drawerHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
-      ...theme.mixins.toolbar,
-      justifyContent: 'flex-end',
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      marginLeft: -drawerWidth,
-    },
-    contentShift: {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    },
-
-
-
-    title: {
-      flexGrow: 1,
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
-      marginLeft: 0,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: '80%',
-        paddingTop: 5,
-        paddingBottom: 5,
-      },
-    },
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      bottom: 1,
-    },
-    inputRoot: {
-      color: 'inherit',
-      width: '100%'
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
+    createStyles({
+        root: {
+            display: 'flex',
         },
-      },
-    },
-  }),
+        appBar: {
+            top:0,
+            left:0,
+            backgroundColor: "rgb(91, 169, 255)",
+            transition: theme.transitions.create(['margin', 'width'], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+            }),
+        },
+        menuButton: {
+            marginRight: theme.spacing(2),
+        },
+        hide: {
+            display: 'none'
+        },
+        drawer: {
+            width: drawerWidth,
+            flexShrink: 0,
+        },
+        drawerPaper: {
+            width: drawerWidth,
+        },
+        drawerHeader: {
+            display: 'flex',
+            alignItems: 'center',
+            padding: theme.spacing(0, 1),
+            // necessary for content to be below app bar
+            ...theme.mixins.toolbar,
+            justifyContent: 'flex-end',
+        },
+        content: {
+            flexGrow: 1,
+            padding: theme.spacing(3),
+            transition: theme.transitions.create('margin', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+            }),
+            marginLeft: -drawerWidth,
+        },
+        contentShift: {
+            transition: theme.transitions.create('margin', {
+                easing: theme.transitions.easing.easeOut,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+            marginLeft: 0,
+        },
+        title: {
+            flexGrow: 1,
+            display: 'none',
+            [theme.breakpoints.up('sm')]: {
+                display: 'block',
+            },
+        },
+        search: {
+            position: 'relative',
+            borderRadius: theme.shape.borderRadius,
+            backgroundColor: fade(theme.palette.common.white, 0.15),
+            '&:hover': {
+                backgroundColor: fade(theme.palette.common.white, 0.25),
+            },
+            marginLeft: 0,
+            width: '100%',
+            [theme.breakpoints.up('sm')]: {
+                marginLeft: theme.spacing(1),
+                width: '80%',
+                paddingTop: 5,
+                paddingBottom: 5,
+            },
+        },
+        searchIcon: {
+            padding: theme.spacing(0, 2),
+            height: '100%',
+            position: 'absolute',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bottom: 1,
+        },
+        inputRoot: {
+            color: 'inherit',
+            width: '100%'
+        },
+        inputInput: {
+            padding: theme.spacing(1, 1, 1, 0),
+            // vertical padding + font size from searchIcon
+            paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+            transition: theme.transitions.create('width'),
+            width: '100%',
+            [theme.breakpoints.up('sm')]: {
+                width: '12ch',
+                '&:focus': {
+                    width: '20ch',
+                },
+            },
+        },
+    }),
 )
 
- const Navbar = (props: Navbar) => {
-  const classes = useStyles();
-  return (
-    <div>
-      <AppBar 
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: props.open,
-        })}
-      >
-        <Toolbar style={{
-            minHeight: 60
-        }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={props.handleDrawerOpen}
-            className={clsx(classes.menuButton, props.open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              value = {props.searchInput}
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>  props.setSearchInput(e.target.value) }
-            />
-          </div>
+const Navbar = (props: Navbar) => {
+    const classes = useStyles();
+    return (
+        <div>
+            <AppBar
+                position="fixed"
+                className={clsx(classes.appBar)}
+            >
+                <Toolbar style={{
+                        minHeight: 60,
+                        marginLeft: 250
+                }}>
+                    <div className={classes.search}>
+                        <div className={classes.searchIcon}>
+                            <SearchIcon />
+                        </div>
+                        <InputBase
+                            value = {props.searchInput}
+                            placeholder="Search…"
+                            classes={{
+                                root: classes.inputRoot,
+                                input: classes.inputInput,
+                            }}
+                            inputProps={{ 'aria-label': 'search' }}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>    props.setSearchInput(e.target.value) }
+                        />
+                    </div>
 
-            {/* Add a better way to log out */}
-          <Button
-          style={{
-            position: "absolute",
-            marginRight: 25,
-            right: 10,
-            backgroundColor: "#cbe4ff"
-          }}
-            variant="contained"
-            onClick={ () => { axios.delete(`/users/sign_out`)
-            .then(resp=>window.location.reload(false) )
-            .catch(res=>window.location.reload(false)) }}>
-                Logout
-            </Button>
-        </Toolbar>
+                        {/* Add a better way to log out */}
+                    <Button
+                      style={{
+                          position: "absolute",
+                          marginRight: 25,
+                          right: 10,
+                          backgroundColor: "#cbe4ff"
+                      }}
+                      variant="contained"
+                      onClick={ () => { axios.delete(`/users/sign_out`)
+                      .then(resp=>window.location.reload(false) )
+                      .catch(res=>window.location.reload(false)) }}>
+                              Logout
+                    </Button>
+                </Toolbar>
+            </AppBar>
 
-      </AppBar>
+            <Drawer
+                className={classes.drawer}
+                variant="permanent"
+                anchor="left"
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+            >
 
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={props.open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={props.handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
+                <List>
+                    <ListItem button key={0} onClick={props.allTodoHandleClick}>
+                        <ListItemIcon>
+                          <CollectionsBookmarkIcon />
+                        </ListItemIcon>
+                        <ListItemText>
+                          Show All Todos
+                        </ListItemText>
+                    </ListItem>
+                    <Divider />
+                    {
+                        Object.entries(props.items).map(([tag, state], i) => (
+                            <ListItem button key={i+1} onClick={() => props.handleClick( { [tag]: !state } ) }>
+                                <ListItemIcon>
+                                    <Checkbox
+                                        checked={state}
+                                    />
+                                </ListItemIcon>
+                                <ListItemText primary={tag} />
+                            </ListItem>
+                        ))
+                    }
+                </List>
+            </Drawer>
+
         </div>
-
-        <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-
-    </div>
-  );
+    );
 }
 export default Navbar

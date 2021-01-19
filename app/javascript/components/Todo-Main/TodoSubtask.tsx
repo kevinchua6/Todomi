@@ -6,6 +6,10 @@ import Checkbox from '@material-ui/core/Checkbox'
 const Wrapper = styled.div`
     padding-top: 10px;
     text-align: left;
+    background-color: #cbe4ff;
+    border-radius: 7px;
+    margin: 3px;
+    margin-bottom: 7px;
 `
 const SubtaskStyle = styled.div`
     padding: 0 5px 5px 5px;

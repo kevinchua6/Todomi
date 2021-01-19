@@ -3,18 +3,29 @@ import { Route, Switch } from 'react-router-dom'
 import Todos from './Todo-Main/Todos'
 import Todo from './Todo-Subtask/Todo'
 
+export interface Tag {
+  id: string,
+  type: string,
+  attributes: {
+      name: string,
+      todo_id: number
+  }
+}
+
 const App = () => {
 
-    const [open, setOpen] = useState(false);
     const [searchInput, setSearchInput] = useState("");
+    const [tagsChkbox, setTagsChkbox] = useState({})
+    const [tags, setTags] = useState<Tag[]>([])
 
-    const handleDrawerOpen = () => {
-      setOpen(true)
-    }
-  
-    const handleDrawerClose = () => {
-      setOpen(false)
-    }
+    const sidebarAllTodoHandleClick = () => { 
+      const newTagsChkbox = {}
+      for (const [key, value] of Object.entries(tagsChkbox)){
+          newTagsChkbox[key] = false
+      }
+      setTagsChkbox(newTagsChkbox)
+  }
+
 
     // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => { setSearchInput({title: e.target.value}) }
 
@@ -22,21 +33,29 @@ const App = () => {
         <Switch>
             <Route exact path="/" render={(props) => ( 
                 <Todos {...props} 
-                  open={open} 
-                  handleDrawerOpen={handleDrawerOpen}
-                  handleDrawerClose={handleDrawerClose}
                   setSearchInput={setSearchInput}
-                  searchInput={searchInput}  
+                  searchInput={searchInput} 
+
+                  tagsChkbox={tagsChkbox}
+                  setTagsChkbox={setTagsChkbox}
+                  tags={tags}
+                  setTags={setTags}
+
+                  sidebarAllTodoHandleClick={sidebarAllTodoHandleClick}
                 />)}
               />
 
             <Route exact path="/todos/:todo_id"  render={(props) => ( 
                 <Todo {...props} 
-                  open={open} 
-                  handleDrawerOpen={handleDrawerOpen}
-                  handleDrawerClose={handleDrawerClose}
                   setSearchInput={setSearchInput}
                   searchInput={searchInput}
+
+                  tagsChkbox={tagsChkbox}
+                  setTagsChkbox={setTagsChkbox}
+                  tags={tags}
+                  setTags={setTags}
+
+                  sidebarAllTodoHandleClick={sidebarAllTodoHandleClick}
                 />)}
             />
         </Switch>

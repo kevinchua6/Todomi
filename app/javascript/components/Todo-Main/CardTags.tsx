@@ -3,8 +3,6 @@ import { Chip, Tooltip, Popover } from '@material-ui/core'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
-    margin-top: 20px;
-
     & > * {
         margin: 2px;
     }
@@ -28,7 +26,7 @@ interface Tag {
 interface CardTags {
     tags: Tag[],
     screenWidth: number,
-    handleDelete: (tagId: string) => Promise<void>
+    handleDelete: (tagId: string) => void
 }
 
 const CardTags = (props: CardTags) => {
