@@ -161,7 +161,8 @@ const Navbar = ({searchInput, setSearchInput, items, handleClick, allTodoHandleC
                         <ListItem button key={i+1} onClick={() => handleClick( { [tag]: !state } ) }>
                             <ListItemIcon>
                                 <Checkbox
-                                    checked={state}
+                                  color="primary"
+                                  checked={state}
                                 />
                             </ListItemIcon>
                             <ListItemText primary={tag} />

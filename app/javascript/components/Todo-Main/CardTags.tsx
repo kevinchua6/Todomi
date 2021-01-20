@@ -19,7 +19,7 @@ interface Tag {
 interface CardTagsI {
     tags: Tag[],
     screenWidth: number,
-    handleDelete: (tagId: string, tagName: any) => void
+    handleDelete: (tagId: string, tagName: string) => void
 };
 
 const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {

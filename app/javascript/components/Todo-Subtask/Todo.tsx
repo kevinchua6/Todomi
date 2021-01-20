@@ -60,7 +60,7 @@ interface TodoI {
     tagsChkbox: Record<string, boolean>
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tags: Tag[]
-    setTags: React.Dispatch<React.SetStateAction<any[]>>
+    setTags: React.Dispatch<React.SetStateAction<Tag[]>>
     sidebarAllTodoHandleClick: () => void
     sidebarHandleOnClick: (tagState: React.SetStateAction<{}>) => void
 };

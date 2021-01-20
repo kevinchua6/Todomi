@@ -162,7 +162,7 @@ const Todos = ({
         setTagsChkbox(getChkboxState());
     }, [tags]);
 
-    const handleDeleteTodo = (todo_id: string, subtasks: Subtasks[]) => {
+    const handleDeleteTodo = (todo_id: string, subtasks: Subtask[]) => {
         const deleteTask = async () => {
             const url = `/api/v1/todos/${todo_id}`;
             await axios.delete(url);
