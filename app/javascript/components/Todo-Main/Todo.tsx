@@ -1,44 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Link } from 'react-router-dom'
-import styled from 'styled-components'
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
-import DoneIcon from '@material-ui/icons/Done'
-import Button from '@material-ui/core/Button'
-import Subtask from '../Todo-Subtask/Subtask'
-import axios from 'axios'
-import { Subtasks } from '../Todo-Subtask/Todo'
-import TodoSubtask from './TodoSubtask'
-import CardTags from './CardTags'
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
+import styled from 'styled-components';
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+import DoneIcon from '@material-ui/icons/Done';
+import Button from '@material-ui/core/Button';
+import Subtask from '../Todo-Subtask/Subtask';
+import axios from 'axios';
+import { Subtasks } from '../Todo-Subtask/Todo';
+import TodoSubtask from './TodoSubtask';
+import CardTags from './CardTags';
 
 const TodoTitle = styled.div`
     padding: 15px 0 15px 0;
     font-size: 22px;
-`
+`;
 const Ellipsis = styled.div`
     text-align: left;
-    margin-left: 50px;
-    margin-top: 6px;
-`
+    margin: 6px 0 0 30px;
+`;
 const ButtonPlaceholder = styled.div`
     width: 110px;
     height: 60px;
     margin: 15px;
     margin-left: auto;
     margin-right: auto;
-`
-
-
-interface Todo {
-    attributes: {
-        title: string,
-        done: boolean,
-        urgency: number,
-        id: number
-    },
-    handleDeleteTodo: (todo_id: string, subtasks: Subtasks[]) => void,
-    setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
-    tagsChkbox: any
-}
+`;
 
 interface Subtask {
     id: string,
@@ -48,43 +34,80 @@ interface Subtask {
         done: boolean,
         todo_id: number
     }    
-}
+};
 
 interface Tag {
-    id: string,
-    name: string,
-    type: string,
+    id: string
+    name: string
+    type: string
     attributes: {
-        name: string,
+        name: string
         todo_id: number
     }
-}
+};
 
-const Todo = (props: Todo) => {
-    const todo_id: string = "" + props.attributes.id
+interface TodoI {
+    attributes: {
+        title: string
+        done: boolean
+        urgency: number
+        id: number
+    }
+    handleDeleteTodo: (todo_id: string, subtasks: Subtasks[]) => void
+    setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
+    tagsChkbox: Record<string, boolean>
+};
 
-    const [subtasks, setSubtasks] = useState<Subtasks[]>([])
-    const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([])
+interface RawData {
+    data: {
+        data: {
+            id: string
+            type: string
+            attributes: {
+                title: string
+                done: boolean
+                urgency: number
+                id: number
+                tag: string
+                order: number
+                user_id: number
+            }
+            relationships: {
+                tags: {
+                    data: {
+                        id: string
+                        type: string
+                    }[]
+                }
+                subtasks: {
+                    data: {
+                        id: string
+                        type: string
+                    }[]
+                }
+            }
+        }
+        included: (Subtask|Tag)[]
+    }
+};
 
-    const [buttonCompleted, setButtonCompleted] = useState(false)
-    const [tags, setTags] = useState<Tag[]>([])
-
-
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth)
-
-
+const Todo = ( { attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI) => {
+    const todo_id: string = "" + attributes.id;
+    const [subtasks, setSubtasks] = useState<Subtasks[]>([]);
+    const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
+    const [buttonCompleted, setButtonCompleted] = useState(false);
+    const [tags, setTags] = useState<Tag[]>([]);
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
     useEffect(() => {
-        window.addEventListener('resize', () => 
-            setScreenWidth(window.innerWidth)
-        );
+        window.addEventListener('resize', () => setScreenWidth(window.innerWidth) );
 
         // Experimenting with async functions to make code look nicer
         (async () => {
             // Get Subtasks for each Todo
             const url = `/api/v1/todos/${todo_id}`;
-            const { data: rawData } = await axios.get(url);
-            const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask');
+            const { data: rawData }: RawData = await axios.get(url);
+            const newSubtasks: Subtasks[] = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask');
             const newTags = rawData.included.filter( (tag: Tag) => tag.type === 'tag')
                 .map( (tag: Tag) => ({ 
                     id: tag.id, name: tag.attributes.name 
@@ -135,9 +158,9 @@ const Todo = (props: Todo) => {
 
     const tagHandleDelete = (tagId: string, tagName: string) => {
         axios.delete(`/api/v1/tags/${tagId}`).then(resp => {
-                const newTagsChkbox = {...props.tagsChkbox}
+                const newTagsChkbox = {...tagsChkbox}
                 delete newTagsChkbox[tagName]
-                props.setTagsChkbox(newTagsChkbox)
+                setTagsChkbox(newTagsChkbox)
 
                 setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
             }
@@ -146,7 +169,7 @@ const Todo = (props: Todo) => {
 
     return (
         <div>
-            <TodoTitle>{props.attributes.title}</TodoTitle>
+            <TodoTitle>{attributes.title}</TodoTitle>
             {/* Todo: Allow the color of the box to be changed */}
 
             {renderSubtasks}
@@ -157,7 +180,7 @@ const Todo = (props: Todo) => {
                 handleDelete={tagHandleDelete}
             />
 
-            <Link to={`/todos/${props.attributes.id}`}>
+            <Link to={`/todos/${attributes.id}`}>
                 <Button
                     startIcon={<FormatListNumberedIcon/>}
                     variant="contained"
@@ -194,7 +217,7 @@ const Todo = (props: Todo) => {
                 startIcon={<DoneIcon/>}
                 disabled={!buttonCompleted}
                 variant="contained"
-                onClick= {() => props.handleDeleteTodo(todo_id, subtasks)}>
+                onClick= {() => handleDeleteTodo(todo_id, subtasks)}>
                     Complete Task
             </Button>
             <ButtonPlaceholder/>

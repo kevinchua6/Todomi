@@ -9,17 +9,6 @@ import clsx from 'clsx'
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark'
 import styled from 'styled-components'
 
-export interface TagStates extends Record<string, boolean> {}
-
-export interface Navbar {
-    searchInput: string
-    setSearchInput: React.Dispatch<React.SetStateAction<string>>,
-    
-    items: TagStates,
-    handleClick: (tagState: TagStates) => void,
-    allTodoHandleClick: () => void
-}
-
 const LogoHome = styled(Link)`
   text-decoration: none;
   color: #fff;
@@ -28,64 +17,23 @@ const LogoHome = styled(Link)`
   margin-left: 10px;
 `
 
-const drawerWidth = 240
+const drawerWidth: number = 240
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        root: {
-            display: 'flex',
-        },
         appBar: {
             top:0,
             left:0,
             backgroundColor: "rgb(91, 169, 255)",
-            transition: theme.transitions.create(['margin', 'width'], {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.leavingScreen,
-            }),
             zIndex: theme.zIndex.drawer + 1
-        },
-        hide: {
-            display: 'none'
         },
         drawer: {
             width: drawerWidth,
-            flexShrink: 0,
             marginTop: 60
         },
         drawerPaper: {
             width: drawerWidth,
-        },
-        drawerHeader: {
-            display: 'flex',
-            alignItems: 'center',
-            padding: theme.spacing(0, 1),
-            // necessary for content to be below app bar
-            ...theme.mixins.toolbar,
-            justifyContent: 'flex-end',
-        },
-        content: {
-            flexGrow: 1,
-            padding: theme.spacing(3),
-            transition: theme.transitions.create('margin', {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.leavingScreen,
-            }),
-            marginLeft: -drawerWidth,
-        },
-        contentShift: {
-            transition: theme.transitions.create('margin', {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
-            }),
-            marginLeft: 0,
-        },
-        title: {
-            flexGrow: 1,
-            display: 'none',
-            [theme.breakpoints.up('sm')]: {
-                display: 'block',
-            },
+            backgroundColor: "aliceblue"
         },
         search: {
             position: 'relative',
@@ -132,91 +80,99 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 )
 
-const Navbar = (props: Navbar) => {
+interface TagStates extends Record<string, boolean> {}
+
+interface NavbarI {
+  searchInput: string
+  setSearchInput: React.Dispatch<React.SetStateAction<string>>,
+  
+  items: TagStates,
+  handleClick: (tagState: TagStates) => void,
+  allTodoHandleClick: () => void
+}
+
+const Navbar = ({searchInput, setSearchInput, items, handleClick, allTodoHandleClick}: NavbarI) => {
     const classes = useStyles();
     return (
         <div>
-            <AppBar
-                position="fixed"
-                className={clsx(classes.appBar)}
-            >
-                <Toolbar style={{
-                        minHeight: 60,
-                }}>
-                    <LogoHome to="/">
-                      Todomi
-                    </LogoHome>
+          <AppBar
+            position="fixed"
+            className={clsx(classes.appBar)}
+          >
+            <Toolbar style={{
+                minHeight: 60,
+            }}>
+              <LogoHome to="/">
+                Todomi
+              </LogoHome>
 
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
-                        <InputBase
-                            value = {props.searchInput}
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>    props.setSearchInput(e.target.value) }
-                        />
-                    </div>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  value = {searchInput}
+                  placeholder="Search…"
+                  classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value) }
+                />
+              </div>
 
-                        {/* Add a better way to log out */}
-                    <Button
-                      style={{
-                          position: "absolute",
-                          marginRight: 25,
-                          right: 10,
-                          backgroundColor: "#cbe4ff"
-                      }}
-                      variant="contained"
-                      onClick={ () => { axios.delete(`/users/sign_out`)
-                      .then(resp=>window.location.reload(false) )
-                      .catch(res=>window.location.reload(false)) }}>
-                              Logout
-                    </Button>
-                </Toolbar>
-            </AppBar>
-
-            <Drawer
-                className={classes.drawer}
-                variant="permanent"
-                anchor="left"
-                classes={{
-                    paper: classes.drawerPaper,
+              <Button
+                style={{
+                    position: "absolute",
+                    marginRight: 25,
+                    right: 10,
+                    backgroundColor: "#cbe4ff"
                 }}
-            >
+                variant="contained"
+                onClick={ () => { axios.delete(`/users/sign_out`)
+                .then(resp=>window.location.reload(false) )
+                .catch(res=>window.location.reload(false)) }}>
+                        Logout
+              </Button>
+            </Toolbar>
+          </AppBar>
 
-                <List style={{
-                  marginTop: 60
-                }}>
-                    <ListItem button key={0} onClick={props.allTodoHandleClick}>
-                        <ListItemIcon>
-                          <CollectionsBookmarkIcon />
-                        </ListItemIcon>
-                        <ListItemText>
-                          Show All Todos
-                        </ListItemText>
-                    </ListItem>
-                    <Divider />
-                    {
-                        Object.entries(props.items).map(([tag, state], i) => (
-                            <ListItem button key={i+1} onClick={() => props.handleClick( { [tag]: !state } ) }>
-                                <ListItemIcon>
-                                    <Checkbox
-                                        checked={state}
-                                    />
-                                </ListItemIcon>
-                                <ListItemText primary={tag} />
-                            </ListItem>
-                        ))
-                    }
-                </List>
-            </Drawer>
+          <Drawer
+            className={classes.drawer}
+            variant="permanent"
+            anchor="left"
+            classes={{
+                paper: classes.drawerPaper,
+            }}
+          >
+            <List style={{ marginTop: 60 }}>
+              <ListItem button key={0} onClick={allTodoHandleClick}>
+                  <ListItemIcon>
+                    <CollectionsBookmarkIcon />
+                  </ListItemIcon>
+                  <ListItemText>
+                    Show All Todos
+                  </ListItemText>
+              </ListItem>
+              <Divider />
+                {
+                    Object.entries(items).map(([tag, state], i) => (
+                        <ListItem button key={i+1} onClick={() => handleClick( { [tag]: !state } ) }>
+                            <ListItemIcon>
+                                <Checkbox
+                                    checked={state}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary={tag} />
+                        </ListItem>
+                    ))
+                }
+            </List>
+          </Drawer>
 
         </div>
     );
 }
+
 export default Navbar

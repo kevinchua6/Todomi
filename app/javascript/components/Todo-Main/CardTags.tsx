@@ -1,18 +1,12 @@
-import React, { Fragment, useState } from 'react'
-import { Chip, Tooltip, Popover } from '@material-ui/core'
-import styled from 'styled-components'
+import React, { Fragment, useState } from 'react';
+import { Chip, Tooltip, Popover } from '@material-ui/core';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
     & > * {
         margin: 2px;
     }
-`
-
-interface Tag {
-    id: string,
-    name: string
-}
-
+`;
 interface Tag {
     id: string,
     name: string,
@@ -21,36 +15,35 @@ interface Tag {
         name: string,
         todo_id: number
     }
-}
-
-interface CardTags {
+};
+interface CardTagsI {
     tags: Tag[],
     screenWidth: number,
     handleDelete: (tagId: string, tagName: any) => void
-}
+};
 
-const CardTags = (props: CardTags) => {
-    if (props.tags.length === 0) return (<Wrapper />)
+const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
+    if (tags.length === 0) return (<Wrapper />);
 
-    const [anchorEl, setAnchorEl] = useState(null)
-    const columnWidth = props.screenWidth / 5
+    const [anchorEl, setAnchorEl] = useState<null | EventTarget & HTMLDivElement>(null);
+    const columnWidth: number = screenWidth / 5;
 
     const getNumOfTagsToDisplay = (tags: Tag[], maxWidth: number, lenBtwnChips: number) => {
-        let numOfTagsToDisplay = 0, currentLen = tags[0].name.length + lenBtwnChips
+        let numOfTagsToDisplay = 0, currentLen = tags[0].name.length + lenBtwnChips;
         for (let i = 0; i < tags.length && currentLen < maxWidth; i++) {
-            const tagName = tags[i].name
-            currentLen += tagName.length * 16 + lenBtwnChips
-            numOfTagsToDisplay++
+            const tagName = tags[i].name;
+            currentLen += tagName.length * 16 + lenBtwnChips;
+            numOfTagsToDisplay++;
         }
-        return numOfTagsToDisplay
+        return numOfTagsToDisplay;
     }
 
-    const tagsDisplayed = props.tags.slice().sort()
-    const numOfTagsToDisplay = getNumOfTagsToDisplay(tagsDisplayed, columnWidth - 70, 14)
-    const tagsHidden = tagsDisplayed.splice(numOfTagsToDisplay)
+    const tagsDisplayed = tags.slice().sort();
+    const numOfTagsToDisplay = getNumOfTagsToDisplay(tagsDisplayed, columnWidth - 70, 14);
+    const tagsHidden = tagsDisplayed.splice(numOfTagsToDisplay);
 
-    const handleClick = ({ currentTarget }) => { setAnchorEl(currentTarget) }
-    const handleClose = () => { setAnchorEl(null) }
+    const handleClick = ({ currentTarget }: React.MouseEvent<HTMLDivElement, MouseEvent>) => { setAnchorEl(currentTarget) };
+    const handleClose = () => { setAnchorEl(null) };
 
     return (
         <Wrapper>
@@ -58,9 +51,9 @@ const CardTags = (props: CardTags) => {
                 <Chip size='small' 
                     key={tag.id}
                     label={tag.name}
-                    onDelete={ () => props.handleDelete(tag.id, tag.name)}
+                    onDelete={ () => handleDelete(tag.id, tag.name)}
                 />
-            ))}
+            ))};
             {
                 tagsHidden.length > 0 &&
                 <Fragment>
@@ -85,17 +78,19 @@ const CardTags = (props: CardTags) => {
                         }}
                     >
                         <Wrapper>
-                            {tagsHidden.map( (tag: Tag) => (
-                                <Chip size='small' 
-                                    key={tag.id}
-                                    label={tag.name}
-                                    onDelete={ () => props.handleDelete(tag.id, tag.name)}
-                                />
-                            ))}
+                            {
+                                tagsHidden.map( (tag: Tag) => (
+                                    <Chip size='small' 
+                                        key={tag.id}
+                                        label={tag.name}
+                                        onDelete={ () => handleDelete(tag.id, tag.name)}
+                                    />
+                                ))
+                            };
                         </Wrapper>
                     </Popover>
                 </Fragment>
-            }
+            };
         </Wrapper>
     )
 }

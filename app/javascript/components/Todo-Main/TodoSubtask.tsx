@@ -6,7 +6,6 @@ import Checkbox from '@material-ui/core/Checkbox'
 const Wrapper = styled.div`
     padding-top: 10px;
     text-align: left;
-    background-color: #cbe4ff;
     border-radius: 7px;
     margin: 3px;
     margin-bottom: 7px;
@@ -52,7 +51,10 @@ const TodoSubtask = (props: TodoSubtask) => {
     }, [subtaskBool])
 
     return (
-        <Wrapper>
+        <Wrapper
+        style={{
+            backgroundColor: subtaskBool ? "#BCFFB6": "#cbe4ff" ,
+        }}>
             <Checkbox 
                 name="subtaskCheckbox"
                 style={{

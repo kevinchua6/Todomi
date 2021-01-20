@@ -105,7 +105,7 @@ export interface TodosI {
     setSearchInput: React.Dispatch<React.SetStateAction<string>>,
     searchInput: string
 
-    tagsChkbox: any
+    tagsChkbox: Record<string, boolean>
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tags: any[]
     setTags: React.Dispatch<React.SetStateAction<any[]>>
@@ -280,7 +280,7 @@ const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, se
                             loaded && 
                             <ResponsiveGridLayout
                                 rowHeight={190}
-                                breakpoints={{lg: 1600, md: 996, sm: 768, xs: 480, xxs: 0}}
+                                breakpoints={{lg: 1900, md: 996, sm: 768, xs: 480, xxs: 0}}
                                 cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
                             >
                                 {grid}

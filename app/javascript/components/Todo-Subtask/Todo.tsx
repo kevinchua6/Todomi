@@ -14,9 +14,11 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core'
 import Tags from './Tags'
 
 const Wrapper = styled.div`
-    padding-top: 90px;
+    padding-top: 20px;
     width: 55%;
     margin: auto;
+    background-color: #cbe4ff;
+    border-radius: 20px;
 `
 const Title = styled.div`
     padding-left: 5px;
@@ -64,7 +66,7 @@ interface TodoSubtaskI {
     setSearchInput: React.Dispatch<React.SetStateAction<string>>,
     searchInput: string
 
-    tagsChkbox: any
+    tagsChkbox: Record<string, boolean>
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tags: any[]
     setTags: React.Dispatch<React.SetStateAction<any[]>>
@@ -77,22 +79,9 @@ const padding = 120
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         content: {
-            flexGrow: 1,
-            padding: theme.spacing(3),
-            transition: theme.transitions.create('margin', {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
+            padding: 44,
             paddingTop: 50
           },
-          contentShift: {
-            transition: theme.transitions.create('margin', {
-              easing: theme.transitions.easing.easeOut,
-              duration: theme.transitions.duration.enteringScreen,
-            }),
-            marginLeft: padding,
-          },
-
     }
 ))
 
@@ -104,7 +93,7 @@ const Todo = ({setSearchInput,
         setTags,
         match,
         sidebarAllTodoHandleClick,
-        sidebarHandleOnClick} ) => {
+        sidebarHandleOnClick } ) => {
 
     const {todo_id} = match.params;
     
