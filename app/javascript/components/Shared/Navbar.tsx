@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { AppBar, Toolbar, IconButton, InputBase, Button, Drawer, Checkbox,
+import { AppBar, Toolbar, InputBase, Button, Drawer, Checkbox,
     List, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles'
 import SearchIcon from '@material-ui/icons/Search'

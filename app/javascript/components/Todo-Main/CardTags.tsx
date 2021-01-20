@@ -26,7 +26,7 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
     if (tags.length === 0) return (<Wrapper />);
 
     const [anchorEl, setAnchorEl] = useState<null | EventTarget & HTMLDivElement>(null);
-    const columnWidth: number = screenWidth / 5;
+    const columnWidth: number = (screenWidth - 240) / 5;
 
     const getNumOfTagsToDisplay = (tags: Tag[], maxWidth: number, lenBtwnChips: number) => {
         let numOfTagsToDisplay = 0, currentLen = tags[0].name.length + lenBtwnChips;
@@ -53,7 +53,7 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
                     label={tag.name}
                     onDelete={ () => handleDelete(tag.id, tag.name)}
                 />
-            ))};
+            ))}
             {
                 tagsHidden.length > 0 &&
                 <Fragment>
@@ -86,13 +86,13 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
                                         onDelete={ () => handleDelete(tag.id, tag.name)}
                                     />
                                 ))
-                            };
+                            }
                         </Wrapper>
                     </Popover>
                 </Fragment>
-            };
+            }
         </Wrapper>
     )
 }
 
-export default CardTags 
+export default CardTags;

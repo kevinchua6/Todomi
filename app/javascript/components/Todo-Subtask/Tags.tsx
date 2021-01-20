@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react'
-import { Chip, Tooltip, Popover } from '@material-ui/core'
-import styled from 'styled-components'
-import AddBoxIcon from '@material-ui/icons/AddBox'
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+import React, { Fragment, useState } from 'react';
+import { Chip, Tooltip, Popover } from '@material-ui/core';
+import styled from 'styled-components';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 const Wrapper = styled.div`
     margin-bottom: 20px;
@@ -10,7 +10,8 @@ const Wrapper = styled.div`
     & > * {
         margin: 2px;
     }
-`
+`;
+
 const InputTag = styled.input`
     width: 70px;
     border: solid 2px #e0e0e0;
@@ -18,7 +19,8 @@ const InputTag = styled.input`
     background-color: #e0e0e0;
     margin-left: 5px;
     vertical-align: middle;
-`
+`;
+
 interface Tag {
     id: string,
     name: string,
@@ -27,7 +29,7 @@ interface Tag {
         name: string,
         todo_id: number
     }
-}
+};
 
 interface TagI {
     tags: Tag[],
@@ -38,21 +40,20 @@ interface TagI {
         name: string;
         todo_id: string;
     }
-}
+};
 
-const Tags = (props: TagI) => {
-
-    const tagsDisplayed = props.tags.slice().sort()
+const Tags = ({ tags, handleDelete, handleChange, handleKeypress, inputTag }: TagI) => {
+    const tagsDisplayed = tags.slice().sort()
     
     return (
         <Wrapper>
             {
-                props.tags.length > 0 &&
+                tags.length > 0 &&
                 tagsDisplayed.map( (tag: Tag) => (
                     <Chip size='small' 
                         key={tag.id}
                         label={tag.attributes.name}
-                        onDelete={ () => props.handleDelete(tag.id, tag.attributes.name)}
+                        onDelete={ () => handleDelete(tag.id, tag.attributes.name)}
                     />
                 ))
             }
@@ -64,9 +65,9 @@ const Tags = (props: TagI) => {
 
             <InputTag
                 placeholder="Add tag..."
-                onChange={props.handleChange}
-                onKeyPress={props.handleKeypress}
-                value={props.inputTag.name}
+                onChange={handleChange}
+                onKeyPress={handleKeypress}
+                value={inputTag.name}
             />
 
             {/* <AddCircleOutlineIcon
@@ -78,7 +79,7 @@ const Tags = (props: TagI) => {
                 }}
             /> */}
         </Wrapper>
-    )
+    );
 }
 
-export default Tags 
+export default Tags;

@@ -1,17 +1,17 @@
-import React, { useState, useEffect, Fragment } from 'react'
-import TextField from '@material-ui/core/TextField'
+import React from 'react';
+import TextField from '@material-ui/core/TextField';
 
-export interface NewSubtask {
+export interface NewSubtaskI {
     inputSubtasks: {
-        text: string;
-        done: boolean;
-        todo_id: string;
-    },
-    handleNewSubtaskKeypress: (e: React.KeyboardEvent<Element>) => void,
+        text: string
+        done: boolean
+        todo_id: string
+    }
+    handleNewSubtaskKeypress: (e: React.KeyboardEvent<Element>) => void
     handleNewSubtaskChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
+};
 
-const NewSubtask = (props: NewSubtask) => {
+const NewSubtask = ({inputSubtasks, handleNewSubtaskChange, handleNewSubtaskKeypress}: NewSubtaskI) => {
     return (
         <TextField 
             style={{
@@ -20,12 +20,12 @@ const NewSubtask = (props: NewSubtask) => {
             }}
             inputProps={{ maxLength: 25 }}
             variant="outlined"
-            value = {props.inputSubtasks.text}
-            onKeyPress = {props.handleNewSubtaskKeypress}
-            onChange = {props.handleNewSubtaskChange}
+            value = {inputSubtasks.text}
+            onKeyPress = {handleNewSubtaskKeypress}
+            onChange = {handleNewSubtaskChange}
             label="Add a subtask"
         />
-    )
+    );
 }
 
-export default NewSubtask
+export default NewSubtask;

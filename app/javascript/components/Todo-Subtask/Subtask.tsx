@@ -1,15 +1,15 @@
-import React, { useState, useEffect, Fragment } from 'react'
-import axios from 'axios'
-import { useDebounce } from 'use-debounce'
-import styled from 'styled-components'
-import Checkbox from '@material-ui/core/Checkbox'
-import TextField from '@material-ui/core/TextField'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useDebounce } from 'use-debounce';
+import styled from 'styled-components';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 
 const Wrapper = styled.div`
     padding-top: 10px;
-`
+`;
 
-export interface Subtask {
+export interface SubtaskI {
     id: string,
     todo_id: number | undefined,
     updateSubtask: (id: string, done: boolean) => void,
@@ -19,42 +19,40 @@ export interface Subtask {
         todo_id: number
     }
     loaded: boolean
-}
+};
 
-const Subtask = (props: Subtask) => {
-    const {text, done, todo_id} = props.attributes
+const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) => {
+    const { text, done } = attributes;
 
-    const [subtasktxt, setSubtasktxt] = useState(text)
-    const [debouncedSubtasktxt] = useDebounce(subtasktxt, 100)
+    const [subtasktxt, setSubtasktxt] = useState(text);
+    const [debouncedSubtasktxt] = useDebounce(subtasktxt, 100);
 
-    const [subtaskBool, setSubtaskBool] = useState(done)
+    const [subtaskBool, setSubtaskBool] = useState(done);
 
     const handleChangeCheckbox = () => { 
-        setSubtaskBool(!subtaskBool)
-        props.updateSubtask(props.id, done)
+        setSubtaskBool(!subtaskBool);
+        updateSubtask(id, done);
     }
 
     useEffect( () => {
-        if (props.loaded) {
-            const url = `/api/v1/subtasks/${props.id}`
+        if (loaded) {
+            const url = `/api/v1/subtasks/${id}`;
 
             axios.patch(url, {done: subtaskBool})
-            .catch( resp => console.log(resp) )
+            .catch( resp => console.log(resp) );
         }
-    }, [subtaskBool])
+    }, [subtaskBool]);
 
-    const handleChangeSubtask = (e: React.ChangeEvent<HTMLInputElement>) => { setSubtasktxt(e.target.value) }
+    const handleChangeSubtask = (e: React.ChangeEvent<HTMLInputElement>) => { setSubtasktxt(e.target.value) };
     
     useEffect( () => {
-        if (props.loaded) {
-            const url = `/api/v1/subtasks/${props.id}`
+        if (loaded) {
+            const url = `/api/v1/subtasks/${id}`;
             
             axios.patch(url, {text: subtasktxt})
-            .catch( resp => console.log(resp) )
+            .catch( resp => console.log(resp) );
         }
-    }, [debouncedSubtasktxt])
-
-    
+    }, [debouncedSubtasktxt]);
 
     return (
         <Wrapper>
@@ -83,7 +81,7 @@ const Subtask = (props: Subtask) => {
                 name="title" 
             />
         </Wrapper>
-    )
-}
+    );
+};
 
-export default Subtask
+export default Subtask;

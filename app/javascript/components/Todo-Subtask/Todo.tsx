@@ -1,17 +1,17 @@
-import React, { useState, useEffect, Fragment } from 'react'
-import { useDebounce } from 'use-debounce'
-import axios from 'axios'
-import { BrowserRouter as Router, Link } from 'react-router-dom'
-import styled from 'styled-components'
-import Subtask from './Subtask'
-import NewSubtask from './NewSubtask'
-import TextField from '@material-ui/core/TextField'
-import { InputTodo } from '../Todo-Main/Todos'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Navbar from '../Shared/Navbar'
-import clsx from 'clsx';
-import { makeStyles, Theme, createStyles } from '@material-ui/core'
-import Tags from './Tags'
+import React, { useState, useEffect } from 'react';
+import { useDebounce } from 'use-debounce';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import Subtask from './Subtask';
+import NewSubtask from './NewSubtask';
+import TextField from '@material-ui/core/TextField';
+import { InputTodo } from '../Todo-Main/Todos';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';;
+import Navbar from '../Shared/Navbar';
+import clsx from 'clsx';;
+import { makeStyles, Theme, createStyles } from '@material-ui/core';
+import Tags from './Tags';
 
 const Wrapper = styled.div`
     padding-top: 20px;
@@ -19,14 +19,14 @@ const Wrapper = styled.div`
     margin: auto;
     background-color: #cbe4ff;
     border-radius: 20px;
-`
+`;
+
 const Title = styled.div`
     padding-left: 5px;
     padding-bottom: 40px;
     font-size: 50px;
     font-weight: bold;
-`
-
+`;
 
 interface Subtask {
     id: string,
@@ -36,16 +36,7 @@ interface Subtask {
         done: boolean,
         todo_id: number
     }    
-}
-
-export interface Subtasks {
-    id: string,
-    attributes: {
-        text: string,
-        done: boolean,
-        todo_id: number
-    }    
-}
+};
 
 interface Tag {
     id: string,
@@ -55,9 +46,9 @@ interface Tag {
         name: string,
         todo_id: number
     }
-}
+};
 
-interface TodoSubtaskI {
+interface TodoI {
     match: {
         params: {
             todo_id: string
@@ -68,13 +59,11 @@ interface TodoSubtaskI {
 
     tagsChkbox: Record<string, boolean>
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
-    tags: any[]
+    tags: Tag[]
     setTags: React.Dispatch<React.SetStateAction<any[]>>
     sidebarAllTodoHandleClick: () => void
-}
-
-const drawerWidth = 240
-const padding = 120
+    sidebarHandleOnClick: (tagState: React.SetStateAction<{}>) => void
+};
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -83,9 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingTop: 50
           },
     }
-))
+));
 
-const Todo = ({setSearchInput,
+const Todo = ({
+        setSearchInput,
         searchInput,
         tagsChkbox,
         setTagsChkbox,
@@ -93,14 +83,15 @@ const Todo = ({setSearchInput,
         setTags,
         match,
         sidebarAllTodoHandleClick,
-        sidebarHandleOnClick } ) => {
+        sidebarHandleOnClick 
+    }: TodoI ) => {
 
-    const {todo_id} = match.params;
+    const { todo_id } = match.params;
     
     const [todo, setTodo] = useState<InputTodo>({ title: "" });
 
     const [debouncedTodo] = useDebounce(todo, 100);
-    const [subtasks, setSubtasks] = useState<Subtasks[]>([]);
+    const [subtasks, setSubtasks] = useState<Subtask[]>([]);
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
     const [loaded, setLoaded] = useState(false);
 
@@ -109,18 +100,17 @@ const Todo = ({setSearchInput,
 
 
     const classes = useStyles();
-
     useEffect( () => {
         // On render gets the todo and subtask info of the specified id
         const url = `/api/v1/todos/${todo_id}`;
 
         (async () => {
             const url = `/api/v1/todos/${todo_id}`
-            const { data: rawData } = await axios.get(url)
-            console.log(rawData)
-            setTodo(rawData.data.attributes) 
-            const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask')
-            const newTagsArr = rawData.included.filter( (tag: Tag) => tag.type === 'tag')
+            const { data: rawData } = await axios.get(url);
+            console.log(rawData);
+            setTodo(rawData.data.attributes);
+            const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask');
+            const newTagsArr = rawData.included.filter( (tag: Tag) => tag.type === 'tag');
             setSubtasks(newSubtasksArr);
             setTags(newTagsArr);
             setLoaded(true);
@@ -146,11 +136,11 @@ const Todo = ({setSearchInput,
                 setSubtasks(subtasks.concat([resp.data.data]))
                 setInputSubtasks({...inputSubtasks, text: '', done: false})
             })
-            .catch( resp => console.log(resp) )
+            .catch( resp => console.log(resp) );
         }
-    }
+    };
 
-    const handleNewSubtaskChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) }
+    const handleNewSubtaskChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputSubtasks({...inputSubtasks, text: e.target.value}) };
     
     const updateSubtask = (id: string, done: boolean) => {
         // When checkbox is clicked for a subtask, changes its done property
@@ -160,13 +150,12 @@ const Todo = ({setSearchInput,
                 : subtask
             )
         )
-    }
+    };
 
     useEffect( () => {
         // Arranges subtasks in order when `subtasks` is modified
-        const undoneSubtasks: Subtasks[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (+a.id > +b.id ? 1 : -1))
-        const doneSubtasks: Subtasks[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (+a.id > +b.id ? 1 : -1))
-        console.log(undoneSubtasks)
+        const undoneSubtasks: Subtask[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (+a.id > +b.id ? 1 : -1));
+        const doneSubtasks: Subtask[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (+a.id > +b.id ? 1 : -1));
 
         setRenderSubtasks([...undoneSubtasks, ...doneSubtasks].map( subtask => {
                 return (
@@ -178,34 +167,34 @@ const Todo = ({setSearchInput,
                         attributes={subtask.attributes}
                         loaded={loaded}
                     />
-                )
+                );
             })
-        )
-    }, [loaded, subtasks])
+        );
+    }, [loaded, subtasks]);
 
     const handleTagDelete = (tagId: string, tagName: string) => {
         axios.delete(`/api/v1/tags/${tagId}`).then(resp => {
-                const newTagsChkbox = {...tagsChkbox}
-                delete newTagsChkbox[tagName]
-                setTagsChkbox(newTagsChkbox)
+                const newTagsChkbox = {...tagsChkbox};
+                delete newTagsChkbox[tagName];
+                setTagsChkbox(newTagsChkbox);
                 
-                setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+                setTags(tags.filter( (tag: Tag) => tag.id !== tagId));
             }
-        )
-    }
+        );
+    };
 
-    const handleNewTagChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTag({ ...inputTag, name: e.target.value }) }
+    const handleNewTagChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTag({ ...inputTag, name: e.target.value }) };
 
     const handleNewTagKeypress = (e: React.KeyboardEvent<Element>) => {
         if (inputTag.name !== "" && e.key === 'Enter' || e.key === 'Tab') {
             axios.post('/api/v1/tags', inputTag).then (resp => {
-                setTags(tags.concat([resp.data.data]))
-                setInputTag({...inputTag, name: '' })
-                setTagsChkbox({...tagsChkbox, [inputTag.name]: false })
+                setTags(tags.concat([resp.data.data]));
+                setInputTag({...inputTag, name: '' });
+                setTagsChkbox({...tagsChkbox, [inputTag.name]: false });
             })
-            .catch( resp => console.log(resp) )
+            .catch( resp => console.log(resp) );
         }
-    }
+    };
 
     return (
         <div>
@@ -213,7 +202,7 @@ const Todo = ({setSearchInput,
                 setSearchInput={setSearchInput}
                 searchInput={searchInput}
 
-                items={ tagsChkbox }
+                items={tagsChkbox}
                 allTodoHandleClick={sidebarAllTodoHandleClick}
                 handleClick={sidebarHandleOnClick}
             />

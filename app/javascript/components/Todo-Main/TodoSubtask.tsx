@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Fragment } from 'react'
-import axios from 'axios'
-import styled from 'styled-components'
-import Checkbox from '@material-ui/core/Checkbox'
+import React, { useState, useEffect, Fragment } from 'react';
+import axios from 'axios';
+import styled from 'styled-components';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const Wrapper = styled.div`
     padding-top: 10px;
@@ -9,14 +9,14 @@ const Wrapper = styled.div`
     border-radius: 7px;
     margin: 3px;
     margin-bottom: 7px;
-`
+`;
 const SubtaskStyle = styled.div`
     padding: 0 5px 5px 5px;
     display: inline;
     font-size: 20px;
     padding-top: 5px;
-`
-export interface TodoSubtask {
+`;
+export interface TodoSubtaskI {
     id: string,
     todo_id: number,
     updateSubtask: (id: string, done: boolean) => void,
@@ -25,36 +25,27 @@ export interface TodoSubtask {
         done: boolean,
         todo_id: number
     }
-}
+};
+const TodoSubtask = ({id, todo_id, updateSubtask, attributes}: TodoSubtaskI) => {
+    const {text, done} = attributes;
 
-
-
-const TodoSubtask = (props: TodoSubtask) => {
-
-    const {text, done} = props.attributes
-
-    const [subtasktxt, setSubtasktxt] = useState(text)
-    const [subtaskBool, setSubtaskBool] = useState(done)
+    const [subtasktxt, setSubtasktxt] = useState(text);
+    const [subtaskBool, setSubtaskBool] = useState(done);
 
     const handleChangeCheckbox = () => { 
         setSubtaskBool(!subtaskBool)
-        props.updateSubtask(props.id, done)
-    }
+        updateSubtask(id, done)
+    };
 
     useEffect( () => {
-            const url = `/api/v1/subtasks/${props.id}`
+            const url: string = `/api/v1/subtasks/${id}`;
 
             axios.patch(url, {done: subtaskBool})
-            .catch( resp => console.log(resp) )
-
-            // 
-    }, [subtaskBool])
+            .catch( resp => console.log(resp) );
+    }, [subtaskBool]);
 
     return (
-        <Wrapper
-        style={{
-            backgroundColor: subtaskBool ? "#BCFFB6": "#cbe4ff" ,
-        }}>
+        <Wrapper style={{ backgroundColor: subtaskBool ? "#BCFFB6": "#cbe4ff" }}>
             <Checkbox 
                 name="subtaskCheckbox"
                 style={{
@@ -73,7 +64,7 @@ const TodoSubtask = (props: TodoSubtask) => {
                 {subtasktxt} 
             </SubtaskStyle>
         </Wrapper>
-    )
+    );
 }
 
-export default TodoSubtask
+export default TodoSubtask;
