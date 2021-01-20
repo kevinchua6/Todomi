@@ -7,18 +7,19 @@ const Wrapper = styled.div`
         margin: 2px;
     }
 `;
+
 interface Tag {
-    id: string,
-    name: string,
-    type: string,
+    id: string
+    name: string
+    type: string
     attributes: {
-        name: string,
+        name: string
         todo_id: number
     }
 };
 interface CardTagsI {
-    tags: Tag[],
-    screenWidth: number,
+    tags: Tag[]
+    screenWidth: number
     handleDelete: (tagId: string, tagName: string) => void
 };
 
@@ -53,7 +54,7 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
                     label={tag.name}
                     onDelete={ () => handleDelete(tag.id, tag.name)}
                 />
-            ))}
+            ) )}
             {
                 tagsHidden.length > 0 &&
                 <Fragment>
@@ -83,9 +84,9 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
                                     <Chip size='small' 
                                         key={tag.id}
                                         label={tag.name}
-                                        onDelete={ () => handleDelete(tag.id, tag.name)}
+                                        onDelete={() => handleDelete(tag.id, tag.name)}
                                     />
-                                ))
+                                ) )
                             }
                         </Wrapper>
                     </Popover>

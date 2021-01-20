@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
@@ -26,15 +26,14 @@ const ButtonPlaceholder = styled.div`
 `;
 
 interface Subtask {
-    id: string,
-    type: string,
+    id: string
+    type: string
     attributes: {
-        text: string,
-        done: boolean,
+        text: string
+        done: boolean
         todo_id: number
     }    
 };
-
 interface Tag {
     id: string
     name: string
@@ -90,7 +89,7 @@ interface RawData {
     }
 };
 
-const Todo = ( { attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI) => {
+const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI) => {
     const todo_id: string = "" + attributes.id;
     const [subtasks, setSubtasks] = useState<Subtask[]>([]);
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
@@ -98,77 +97,73 @@ const Todo = ( { attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: Todo
     const [tags, setTags] = useState<Tag[]>([]);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-    useEffect(() => {
-        window.addEventListener('resize', () => setScreenWidth(window.innerWidth) );
+    useEffect( () => {
+        window.addEventListener('resize', () => setScreenWidth(window.innerWidth));
 
         (async () => {
             // Get Subtasks for each Todo
             const url = `/api/v1/todos/${todo_id}`;
             const { data: rawData } = await axios.get(url);
-            const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask');
-            const newTags = rawData.included.filter( (tag: Tag) => tag.type === 'tag')
-                .map( (tag: Tag) => ({
-                    id: tag.id, name: tag.attributes.name 
-                }));
+            const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
+            const newTags = rawData.included
+                .filter( (tag: Tag) => tag.type === 'tag' )
+                .map( (tag: Tag) => ({ id: tag.id, name: tag.attributes.name }) );
             setSubtasks(newSubtasks);
             setTags(newTags);
         })();
-    }, []);
+    }, [] );
 
     const updateSubtask = (id: string, done: boolean) => {
-        setSubtasks(subtasks.map( subtask => 
+        setSubtasks(subtasks.map(subtask => 
             subtask.id === id
-                ? {...subtask, attributes: {...subtask.attributes, done: !done} }
+                ? { ...subtask, attributes: {...subtask.attributes, done: !done} }
                 : subtask
             )
         );
     };
 
     useEffect( ()=> {
-        const undoneSubtasks: Subtask[] = subtasks.filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1));
-        const doneSubtasks: Subtask[] = subtasks.filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1));
+        const undoneSubtasks: Subtask[] = subtasks
+            .filter(subtask => !subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1) );
+        const doneSubtasks: Subtask[] = subtasks
+            .filter(subtask => subtask.attributes.done).sort( (a, b) => (a.id > b.id ? 1 : -1) );
 
         const maxNoSubtask: number = 6
         setRenderSubtasks([...undoneSubtasks, ...doneSubtasks].map( (subtask, index) => 
             index < maxNoSubtask
-            ? (
-                <TodoSubtask
-                    key={subtask.id}
-                    id={subtask.id}
-                    todo_id={+todo_id}
-                    updateSubtask={updateSubtask}
-                    attributes={subtask.attributes}
-                />
-            )
-            : index == maxNoSubtask
-            ? ( <Ellipsis key={subtask.id}> ... </Ellipsis> )
-            : ( <div key={subtask.id}></div> )
+                ? (
+                    <TodoSubtask
+                        key={subtask.id}
+                        id={subtask.id}
+                        todo_id={+todo_id}
+                        updateSubtask={updateSubtask}
+                        attributes={subtask.attributes}
+                    />
+                )
+                : index == maxNoSubtask
+                    ? ( <Ellipsis key={subtask.id}> ... </Ellipsis> )
+                    : ( <div key={subtask.id} /> )
         ));
 
         // If all the subtasks are done
-        if (undoneSubtasks.length === 0) {
-            setButtonCompleted(true);
-        } else {
-            setButtonCompleted(false);
-        }
+        undoneSubtasks.length === 0 ? setButtonCompleted(true) : setButtonCompleted(false);
 
-    }, [subtasks])
+    }, [subtasks] );
 
     const tagHandleDelete = (tagId: string, tagName: string) => {
-        axios.delete(`/api/v1/tags/${tagId}`).then(resp => {
-                const newTagsChkbox = {...tagsChkbox};
+        const url = `/api/v1/tags/${tagId}`;
+        axios.delete(url)
+            .then(resp => {
+                const newTagsChkbox = { ...tagsChkbox };
                 delete newTagsChkbox[tagName];
                 setTagsChkbox(newTagsChkbox);
-
-                setTags(tags.filter( (tag: Tag) => tag.id !== tagId));
-            }
-        );
+                setTags(tags.filter( (tag: Tag) => tag.id !== tagId) );
+            });
     }
 
     return (
-        <div>
-            <TodoTitle> {attributes.title} </TodoTitle>
-
+        <Fragment>
+            <TodoTitle>{attributes.title}</TodoTitle>
             {renderSubtasks}
 
             <CardTags
@@ -177,7 +172,7 @@ const Todo = ( { attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: Todo
                 handleDelete={tagHandleDelete}
             />
 
-            <Link to= {`/todos/${attributes.id}`} >
+            <Link to={`/todos/${attributes.id}`}>
                 <Button
                     startIcon={<FormatListNumberedIcon/>}
                     variant="contained"
@@ -193,8 +188,9 @@ const Todo = ( { attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: Todo
                         right: 0,
                         width: "95%",
                         fontWeight: "bold"
-                    }}>
-                        View Task
+                    }}
+                >
+                    View Task
                 </Button>
             </Link>
             <Button
@@ -214,12 +210,13 @@ const Todo = ( { attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: Todo
                 startIcon={<DoneIcon/>}
                 disabled={!buttonCompleted}
                 variant="contained"
-                onClick= {() => handleDeleteTodo(todo_id, subtasks)}>
-                    Complete Task
+                onClick= {() => handleDeleteTodo(todo_id, subtasks)}
+            >
+                Complete Task
             </Button>
-            <ButtonPlaceholder/>
-        </div>
-    )
+            <ButtonPlaceholder />
+        </Fragment>
+    );
 }
 
 export default Todo;

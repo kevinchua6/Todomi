@@ -10,12 +10,12 @@ const Wrapper = styled.div`
 `;
 
 export interface SubtaskI {
-    id: string,
-    todo_id: number | undefined,
-    updateSubtask: (id: string, done: boolean) => void,
+    id: string
+    todo_id: number | undefined
+    updateSubtask: (id: string, done: boolean) => void
     attributes: {
-        text: string,
-        done: boolean,
+        text: string
+        done: boolean
         todo_id: number
     }
     loaded: boolean
@@ -23,10 +23,8 @@ export interface SubtaskI {
 
 const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) => {
     const { text, done } = attributes;
-
     const [subtasktxt, setSubtasktxt] = useState(text);
     const [debouncedSubtasktxt] = useDebounce(subtasktxt, 100);
-
     const [subtaskBool, setSubtaskBool] = useState(done);
 
     const handleChangeCheckbox = () => { 
@@ -37,22 +35,20 @@ const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) =
     useEffect( () => {
         if (loaded) {
             const url = `/api/v1/subtasks/${id}`;
-
             axios.patch(url, {done: subtaskBool})
-            .catch( resp => console.log(resp) );
+                .catch( resp => console.log(resp) );
         }
-    }, [subtaskBool]);
+    }, [subtaskBool] );
 
     const handleChangeSubtask = (e: React.ChangeEvent<HTMLInputElement>) => { setSubtasktxt(e.target.value) };
     
     useEffect( () => {
         if (loaded) {
             const url = `/api/v1/subtasks/${id}`;
-            
             axios.patch(url, {text: subtasktxt})
-            .catch( resp => console.log(resp) );
+                .catch( resp => console.log(resp) );
         }
-    }, [debouncedSubtasktxt]);
+    }, [debouncedSubtasktxt] );
 
     return (
         <Wrapper>
@@ -72,9 +68,7 @@ const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) =
                         opacity: subtaskBool ? 0.5 : 1
                     }
                 }}
-                style={{
-                    width: "91%",
-                }}
+                style={{ width: "91%" }}
                 onChange={handleChangeSubtask} 
                 value={subtasktxt} 
                 type="text" 

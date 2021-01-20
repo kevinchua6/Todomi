@@ -18,7 +18,6 @@ class Api::V1::TodosController < ApplicationController
         render json: TodoSerializer.new(@todo, options).serializable_hash.to_json
     end
 
-
     def create
         @todo = Todo.new(todo_params)
         @todo.user_id = current_user.id
@@ -50,7 +49,6 @@ class Api::V1::TodosController < ApplicationController
         end
     end
 
-
     private
 
     def options
@@ -58,7 +56,7 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def todo_params
-        params.require(:todo).permit(:title, :done, :urgency, :tag)
+        params.require(:todo).permit(:title, :tag)
     end
 
 end

@@ -1,7 +1,6 @@
 class Api::V1::TagsController < ApplicationController
     protect_from_forgery with: :null_session
 
-
     def create
       tag = todo.tags.new(tag_params)
 

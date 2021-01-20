@@ -16,19 +16,20 @@ const SubtaskStyle = styled.div`
     font-size: 20px;
     padding-top: 5px;
 `;
+
 export interface TodoSubtaskI {
-    id: string,
-    todo_id: number,
-    updateSubtask: (id: string, done: boolean) => void,
+    id: string
+    todo_id: number
+    updateSubtask: (id: string, done: boolean) => void
     attributes: {
-        text: string,
-        done: boolean,
+        text: string
+        done: boolean
         todo_id: number
     }
 };
-const TodoSubtask = ({id, todo_id, updateSubtask, attributes}: TodoSubtaskI) => {
-    const {text, done} = attributes;
 
+const TodoSubtask = ({ id, todo_id, updateSubtask, attributes }: TodoSubtaskI) => {
+    const {text, done} = attributes;
     const [subtasktxt, setSubtasktxt] = useState(text);
     const [subtaskBool, setSubtaskBool] = useState(done);
 
@@ -38,19 +39,16 @@ const TodoSubtask = ({id, todo_id, updateSubtask, attributes}: TodoSubtaskI) => 
     };
 
     useEffect( () => {
-            const url: string = `/api/v1/subtasks/${id}`;
-
-            axios.patch(url, {done: subtaskBool})
+        const url: string = `/api/v1/subtasks/${id}`;
+        axios.patch(url, { done: subtaskBool })
             .catch( resp => console.log(resp) );
-    }, [subtaskBool]);
+    }, [subtaskBool] );
 
     return (
-        <Wrapper style={{ backgroundColor: subtaskBool ? "#BCFFB6": "#cbe4ff" }}>
+        <Wrapper style={{ backgroundColor: subtaskBool ? "#BCFFB6" : "#cbe4ff" }}>
             <Checkbox 
                 name="subtaskCheckbox"
-                style={{
-                    paddingTop: 4,
-                }}
+                style={{ paddingTop: 4 }}
                 onChange={handleChangeCheckbox} 
                 checked={subtaskBool}
                 color="primary"

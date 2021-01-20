@@ -9,12 +9,10 @@
 todos = Todo.create([
     { 
       title: "buy milk",
-      done: false,
       urgency: 3
     }, 
     {
         title: "buy dead",
-        done: false,
         urgency: 2
     },
     

@@ -11,7 +11,7 @@ export interface NewSubtaskI {
     handleNewSubtaskChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 };
 
-const NewSubtask = ({inputSubtasks, handleNewSubtaskChange, handleNewSubtaskKeypress}: NewSubtaskI) => {
+const NewSubtask = ({ inputSubtasks, handleNewSubtaskChange, handleNewSubtaskKeypress }: NewSubtaskI) => {
     return (
         <TextField 
             style={{
