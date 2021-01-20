@@ -17,18 +17,21 @@ const Home = styled.div`
     max-width: 100%;
     margin-left: 241px;
     margin-right: auto;
+
 `
 const Header = styled.div`
     padding: 100px 100px 10px 100px;
 
     h1 {
-        font-size: 45px;
+        font-size: 70px;
     }
+    font-family: 'Montserrat',sans-serif;
+
 `
 const Subheader = styled.div`
     font-weight: 300;
     font-size: 23px;
-    padding-bottom: 10px;
+    padding-bottom: 30px;
 `
 
 export interface RawData {
@@ -120,7 +123,7 @@ const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, se
         // Returns an object like {a:0, b:0, c:0} where a,b,c are tag names
         return tags.map(tag=>tag.attributes.name).reduce( (acc: Object, tag: string) => ({
             ...acc,
-            [tag]: tagsChkbox[tag] === undefined ? false : true
+            [tag]: tagsChkbox[tag] === undefined ? false : tagsChkbox[tag]
         }), {})
     }
 
@@ -224,12 +227,13 @@ const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, se
             const y = Math.floor(index/columnNo)
             return (
                 <div key={todo_id} 
-                style={{
-                    backgroundColor: "#91c5ff" }}
-                data-grid={{x: x, y: y, w: 1, h: height}} >
+                    style={{ backgroundColor: "#91c5ff" }}
+                    data-grid={{x: x, y: y, w: 1, h: height}} >
                 <Todo
                     attributes={todo.attributes}
                     handleDeleteTodo={handleDeleteTodo}
+                    setTagsChkbox={setTagsChkbox}
+                    tagsChkbox={tagsChkbox}
                 />
                 </div>
             )
@@ -254,7 +258,6 @@ const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, se
     
     return (
         <div>
-
                 <Navbar
                     setSearchInput={setSearchInput}
                     searchInput={searchInput}
@@ -265,8 +268,8 @@ const Todos = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, se
                 />
                     <Home>
                         <Header>
-                            <h1>Todo App</h1>
-                            <Subheader>Simple todo list.</Subheader>
+                            <h1>Todomi</h1>
+                            <Subheader>Grid style Todolist.</Subheader>
                         </Header>
                         <TodoInput
                             inputTodo = {inputTodo}

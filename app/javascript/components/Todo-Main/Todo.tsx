@@ -27,6 +27,7 @@ const ButtonPlaceholder = styled.div`
     margin-right: auto;
 `
 
+
 interface Todo {
     attributes: {
         title: string,
@@ -34,7 +35,9 @@ interface Todo {
         urgency: number,
         id: number
     },
-    handleDeleteTodo: (todo_id: string, subtasks: Subtasks[]) => void 
+    handleDeleteTodo: (todo_id: string, subtasks: Subtasks[]) => void,
+    setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
+    tagsChkbox: any
 }
 
 interface Subtask {
@@ -130,12 +133,16 @@ const Todo = (props: Todo) => {
 
     }, [subtasks])
 
-    const tagHandleDelete = (tagId: string) => {
-        axios.delete(`/api/v1/tags/${tagId}`).then(
-            resp => setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+    const tagHandleDelete = (tagId: string, tagName: string) => {
+        axios.delete(`/api/v1/tags/${tagId}`).then(resp => {
+                const newTagsChkbox = {...props.tagsChkbox}
+                delete newTagsChkbox[tagName]
+                props.setTagsChkbox(newTagsChkbox)
+
+                setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+            }
         )
     }
-
 
     return (
         <div>
@@ -143,7 +150,7 @@ const Todo = (props: Todo) => {
             {/* Todo: Allow the color of the box to be changed */}
 
             {renderSubtasks}
-            
+
             <CardTags
                 screenWidth={screenWidth}
                 tags={tags}

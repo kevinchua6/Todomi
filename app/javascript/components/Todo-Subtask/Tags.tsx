@@ -31,7 +31,7 @@ interface Tag {
 
 interface TagI {
     tags: Tag[],
-    handleDelete: (tagId: string) => void,
+    handleDelete: (tagId: string, tagName: string) => void,
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     handleKeypress: (e: React.KeyboardEvent<Element>) => void,
     inputTag: {
@@ -52,7 +52,7 @@ const Tags = (props: TagI) => {
                     <Chip size='small' 
                         key={tag.id}
                         label={tag.attributes.name}
-                        onDelete={ () => props.handleDelete(tag.id)}
+                        onDelete={ () => props.handleDelete(tag.id, tag.attributes.name)}
                     />
                 ))
             }

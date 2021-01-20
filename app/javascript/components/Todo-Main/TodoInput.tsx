@@ -14,7 +14,7 @@ const InputTodo = styled.input`
 `
 const PlusSign = styled(AddIcon)({
     verticalAlign: "middle",
-    paddingBottom: 8.5,
+    paddingBottom: 6.2,
     paddingLeft: 3
 })
 

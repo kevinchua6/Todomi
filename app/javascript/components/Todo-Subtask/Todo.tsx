@@ -96,7 +96,16 @@ const useStyles = makeStyles((theme: Theme) =>
     }
 ))
 
-const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, setTags, match, sidebarAllTodoHandleClick, sidebarHandleOnClick} ) => {
+const Todo = ({setSearchInput,
+        searchInput,
+        tagsChkbox,
+        setTagsChkbox,
+        tags,
+        setTags,
+        match,
+        sidebarAllTodoHandleClick,
+        sidebarHandleOnClick} ) => {
+
     const {todo_id} = match.params;
     
     const [todo, setTodo] = useState<InputTodo>({ title: "" });
@@ -185,9 +194,14 @@ const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, set
         )
     }, [loaded, subtasks])
 
-    const handleTagDelete = (tagId: string) => {
-        axios.delete(`/api/v1/tags/${tagId}`).then( (resp) =>
-            setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+    const handleTagDelete = (tagId: string, tagName: string) => {
+        axios.delete(`/api/v1/tags/${tagId}`).then(resp => {
+                const newTagsChkbox = {...tagsChkbox}
+                delete newTagsChkbox[tagName]
+                setTagsChkbox(newTagsChkbox)
+                
+                setTags(tags.filter( (tag: Tag) => tag.id !== tagId))
+            }
         )
     }
 
@@ -198,6 +212,7 @@ const Todo = ({setSearchInput, searchInput, tagsChkbox, setTagsChkbox, tags, set
             axios.post('/api/v1/tags', inputTag).then (resp => {
                 setTags(tags.concat([resp.data.data]))
                 setInputTag({...inputTag, name: '' })
+                setTagsChkbox({...tagsChkbox, [inputTag.name]: false })
             })
             .catch( resp => console.log(resp) )
         }

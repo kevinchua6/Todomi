@@ -26,7 +26,7 @@ interface Tag {
 interface CardTags {
     tags: Tag[],
     screenWidth: number,
-    handleDelete: (tagId: string) => void
+    handleDelete: (tagId: string, tagName: any) => void
 }
 
 const CardTags = (props: CardTags) => {
@@ -58,7 +58,7 @@ const CardTags = (props: CardTags) => {
                 <Chip size='small' 
                     key={tag.id}
                     label={tag.name}
-                    onDelete={ () => props.handleDelete(tag.id)}
+                    onDelete={ () => props.handleDelete(tag.id, tag.name)}
                 />
             ))}
             {
@@ -89,7 +89,7 @@ const CardTags = (props: CardTags) => {
                                 <Chip size='small' 
                                     key={tag.id}
                                     label={tag.name}
-                                    onDelete={ () => props.handleDelete(tag.id)}
+                                    onDelete={ () => props.handleDelete(tag.id, tag.name)}
                                 />
                             ))}
                         </Wrapper>

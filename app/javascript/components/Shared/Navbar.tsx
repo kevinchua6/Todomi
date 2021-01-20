@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react'
+import { Link } from 'react-router-dom'
 import { AppBar, Toolbar, IconButton, InputBase, Button, Drawer, Checkbox,
     List, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles'
@@ -6,6 +7,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import axios from 'axios'
 import clsx from 'clsx'
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark'
+import styled from 'styled-components'
 
 export interface TagStates extends Record<string, boolean> {}
 
@@ -17,6 +19,14 @@ export interface Navbar {
     handleClick: (tagState: TagStates) => void,
     allTodoHandleClick: () => void
 }
+
+const LogoHome = styled(Link)`
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.9rem;
+  font-family: 'Montserrat',sans-serif;
+  margin-left: 10px;
+`
 
 const drawerWidth = 240
 
@@ -33,9 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
             }),
-        },
-        menuButton: {
-            marginRight: theme.spacing(2),
+            zIndex: theme.zIndex.drawer + 1
         },
         hide: {
             display: 'none'
@@ -43,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
         drawer: {
             width: drawerWidth,
             flexShrink: 0,
+            marginTop: 60
         },
         drawerPaper: {
             width: drawerWidth,
@@ -85,10 +94,9 @@ const useStyles = makeStyles((theme: Theme) =>
             '&:hover': {
                 backgroundColor: fade(theme.palette.common.white, 0.25),
             },
-            marginLeft: 0,
             width: '100%',
             [theme.breakpoints.up('sm')]: {
-                marginLeft: theme.spacing(1),
+                marginLeft: 115,
                 width: '80%',
                 paddingTop: 5,
                 paddingBottom: 5,
@@ -134,8 +142,11 @@ const Navbar = (props: Navbar) => {
             >
                 <Toolbar style={{
                         minHeight: 60,
-                        marginLeft: 250
                 }}>
+                    <LogoHome to="/">
+                      Todomi
+                    </LogoHome>
+
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
                             <SearchIcon />
@@ -178,7 +189,9 @@ const Navbar = (props: Navbar) => {
                 }}
             >
 
-                <List>
+                <List style={{
+                  marginTop: 60
+                }}>
                     <ListItem button key={0} onClick={props.allTodoHandleClick}>
                         <ListItemIcon>
                           <CollectionsBookmarkIcon />
