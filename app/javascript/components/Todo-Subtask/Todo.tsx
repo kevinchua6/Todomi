@@ -15,6 +15,7 @@ import Tags from './Tags';
 
 const Wrapper = styled.div`
     padding-top: 20px;
+    padding-bottom: 25px;
     width: 55%;
     margin: auto;
     background-color: #cbe4ff;
