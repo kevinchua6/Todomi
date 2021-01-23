@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chip } from '@material-ui/core';
 import styled from 'styled-components';
+import AutosizeInput from 'react-input-autosize';
 
 const Wrapper = styled.div`
     margin-bottom: 20px;
@@ -8,14 +9,6 @@ const Wrapper = styled.div`
     & > * {
         margin: 2px;
     }
-`;
-const InputTag = styled.input`
-    width: 70px;
-    border: solid 2px #e0e0e0;
-    border-radius: 5px;
-    background-color: #e0e0e0;
-    margin-left: 5px;
-    vertical-align: middle;
 `;
 
 interface Tag {
@@ -54,11 +47,19 @@ const Tags = ({ tags, handleDelete, handleChange, handleKeypress, inputTag }: Ta
                 ) )
             }
 
-            <InputTag
-                placeholder="Add tag..."
+            <AutosizeInput
+                placeholder="Add tag...    "
+                placeholderIsMinWidth
                 onChange={handleChange}
                 onKeyPress={handleKeypress}
                 value={inputTag.name}
+                inputStyle= {{
+                    border: "solid 2px #e0e0e0",
+                    borderRadius: 5,
+                    backgroundColor: "#e0e0e0",
+                    marginLeft: 5,
+                    verticalAlign: "middle",
+                }}
             />
 
         </Wrapper>
