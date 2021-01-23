@@ -8,6 +8,8 @@ import axios from 'axios'
 import clsx from 'clsx'
 import CollectionsBookmarkIcon from '@material-ui/icons/CollectionsBookmark'
 import styled from 'styled-components'
+import HomeIcon from '@material-ui/icons/Home';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 
 const LogoHome = styled(Link)`
     text-decoration: none;
@@ -77,6 +79,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+        listItemText: {
+          fontSize: 20,
+          textAlign: "center",
+          fontFamily: "'Montserrat',sans-serif"
+        }
     }),
 )
 
@@ -88,10 +95,28 @@ interface NavbarI {
     items: TagStates,
     handleClick: (tagState: TagStates) => void,
     allTodoHandleClick: () => void
+    currentTab: string
+    setCurrentTab: React.Dispatch<React.SetStateAction<string>>
 }
 
-const Navbar = ({searchInput, setSearchInput, items, handleClick, allTodoHandleClick}: NavbarI) => {
+const Navbar = ({searchInput,
+  setSearchInput,
+  items,
+  handleClick,
+  allTodoHandleClick,
+  currentTab,
+  setCurrentTab
+}: NavbarI) => {
     const classes = useStyles()
+
+    const handleHomepageClick = () => {
+      setCurrentTab("Homepage");
+    }
+
+    const handleCompletedTasksClick = () => {
+      setCurrentTab("Completed Tasks");
+    }
+
     return (
         <Fragment>
             <AppBar position="fixed" className={clsx(classes.appBar)}>
@@ -139,9 +164,42 @@ const Navbar = ({searchInput, setSearchInput, items, handleClick, allTodoHandleC
                 classes={{ paper: classes.drawerPaper }}
             >
                 <List style={{ marginTop: 60 }}>
+                    
+                    <ListItem button 
+                      onClick={handleHomepageClick}
+                      style={{
+                        backgroundColor: currentTab === "Homepage" ? "#91c5ff" : "",
+                        borderRadius: 10
+                      }}
+                    >
+                        <ListItemIcon><HomeIcon /></ListItemIcon>
+                        <ListItemText>Homepage</ListItemText>
+                    </ListItem>
+
+                    <ListItem button 
+                      onClick={handleCompletedTasksClick}
+                      style={{
+                        backgroundColor: currentTab === "Completed Tasks" ? "#91c5ff" : "",
+                        borderRadius: 10
+                      }}
+                    >
+                        <ListItemIcon><AssignmentTurnedInIcon /></ListItemIcon>
+                        <ListItemText>Completed Tasks</ListItemText>
+                    </ListItem>
+
+                    <Divider />
+
+                    <ListItem>
+                        <ListItemText
+                          classes={{primary: classes.listItemText}}
+                        >
+                          Tags
+                        </ListItemText>
+                    </ListItem>
+
                     <ListItem button key={0} onClick={allTodoHandleClick}>
                         <ListItemIcon><CollectionsBookmarkIcon /></ListItemIcon>
-                        <ListItemText>Show All Todos</ListItemText>
+                        <ListItemText>Uncheck All Tags</ListItemText>
                     </ListItem>
                     <Divider />
                     {

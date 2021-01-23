@@ -64,7 +64,9 @@ const App = () => {
 
     const [loaded, setLoaded] = useState(false);
 	const [userId, setUserId] = useState<number>();
-    const [todos, setTodos] = useState<Todos[]>([]);
+	const [todos, setTodos] = useState<Todos[]>([]);
+	
+	const [currentTab, setCurrentTab] = useState('Homepage');
 	
     const handleTagDelete = (tagId: string, tagName: string) => {
         axios.delete(`/api/v1/tags/${tagId}`)
@@ -87,9 +89,8 @@ const App = () => {
     // Runs when tags is loaded
     useEffect( () => {
         setTagsChkbox(getChkboxState());
-    }, [tags] );
-
-
+	}, [tags] );
+	
     const sidebarAllTodoHandleClick = () => { 
         const newTagsChkbox = {};
         for (const [key, value] of Object.entries(tagsChkbox)) {
@@ -145,6 +146,8 @@ const App = () => {
 							userId={userId}
 							todos={todos}
 							setTodos={setTodos}
+							currentTab={currentTab}
+							setCurrentTab={setCurrentTab}
 						/>
 					)} />
 				}
@@ -161,9 +164,11 @@ const App = () => {
 
 						sidebarAllTodoHandleClick={sidebarAllTodoHandleClick}
 						sidebarHandleOnClick={sidebarHandleOnClick}
+
+						currentTab={currentTab}
+						setCurrentTab={setCurrentTab}
 					/>
 				)} />
-				
 			</Switch>
     );
 }

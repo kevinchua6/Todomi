@@ -29,16 +29,17 @@ const Subheader = styled.div`
     font-size: 23px;
     padding-bottom: 30px;
 `;
+
 export interface Todos {
     id: string
     type: string
     attributes: {
         title: string
         done: boolean
-        urgency: number
+        // urgency: number
         id: number
         tag: string
-        order: number
+        // order: number
         user_id: number
     },
     relationships: {
@@ -93,7 +94,6 @@ export interface UserId {
 export interface TodosI {
     setSearchInput: React.Dispatch<React.SetStateAction<string>>
     searchInput: string
-
     tagsChkbox: Record<string, boolean>
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tags: Tag[]
@@ -105,6 +105,8 @@ export interface TodosI {
     userId: number
     todos: Todos[]
     setTodos: React.Dispatch<React.SetStateAction<Todos[]>>
+    currentTab: string
+    setCurrentTab: React.Dispatch<React.SetStateAction<string>>
 }
 
 const Todos = ({
@@ -120,14 +122,41 @@ const Todos = ({
     loaded,
     userId,
     todos,
-    setTodos
+    setTodos,
+    currentTab,
+    setCurrentTab
 }: TodosI) => {
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" });
 
+    const handleCompleteTodo = (todo_id: string) => {
+        axios.patch(`/api/v1/todos/${todo_id}`, {done: true})
+            .then( resp => {
+                setTodos( todos.map(todo => 
+                    todo.id === todo_id
+                        ? {...todo, attributes: {...todo.attributes, done: true} }
+                        : todo
+                    )
+                )
+            })
+            .catch( resp => console.log(resp) );
+    }
+
+    const handleRestoreTodo = (todo_id: string) => {
+        axios.patch(`/api/v1/todos/${todo_id}`, {done: false})
+            .then( resp => {
+                setTodos( todos.map(todo => 
+                    todo.id === todo_id
+                        ? {...todo, attributes: {...todo.attributes, done: false} }
+                        : todo
+                    )
+                )
+            })
+            .catch( resp => console.log(resp) );
+    }
+
     const handleDeleteTodo = (todo_id: string, subtasks: Subtask[]) => {
         const deleteTask = async () => {
-            const url = `/api/v1/todos/${todo_id}`;
-            await axios.delete(url);
+            await axios.delete(`/api/v1/todos/${todo_id}`);
             const rawData = (await axios.get('/api/v1/todos')).data;
             const todosArr: Todos[] = rawData.data.filter( (todo: Todos) => todo.attributes.user_id === userId );
             const todoIdArr: number[] = todosArr.map( (todo: Todos) => +todo.id );
@@ -156,6 +185,12 @@ const Todos = ({
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
     const grid = todos.slice()
         .filter( (todo: Todos) => {
+            const tabBool = currentTab === "Homepage" 
+                ? !todo.attributes.done
+                : currentTab === "Completed Tasks"
+                ? todo.attributes.done
+                : false
+
             const isInSearchInput = todo.attributes.title.includes(searchInput);
             let hasSelectedTag = true;
             if (!Object.values(tagsChkbox).every(bool => !bool)) {
@@ -166,7 +201,7 @@ const Todos = ({
                     }
                 }
             }
-            return isInSearchInput && hasSelectedTag;
+            return isInSearchInput && hasSelectedTag && tabBool;
         } )
         .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1) )
         .map( (todo, index) => {
@@ -199,6 +234,8 @@ const Todos = ({
                 >
                     <Todo
                         attributes={todo.attributes}
+                        handleCompleteTodo={handleCompleteTodo}
+                        handleRestoreTodo={handleRestoreTodo}
                         handleDeleteTodo={handleDeleteTodo}
                         tags={tags}
                         setTagsChkbox={setTagsChkbox}
@@ -234,6 +271,9 @@ const Todos = ({
                 items={tagsChkbox}
                 allTodoHandleClick={sidebarAllTodoHandleClick}
                 handleClick={sidebarHandleOnClick}
+
+                currentTab={currentTab}
+                setCurrentTab={setCurrentTab}
             />
             <Home>
                 <Header>

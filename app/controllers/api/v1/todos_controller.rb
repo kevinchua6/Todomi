@@ -1,6 +1,5 @@
 class Api::V1::TodosController < ApplicationController
     protect_from_forgery with: :null_session
-    # Need to figure out the proper way to do this
     skip_before_action :verify_authenticity_token
 
     def new
@@ -35,7 +34,7 @@ class Api::V1::TodosController < ApplicationController
         if @todo.update(todo_params)
             render json: TodoSerializer.new(@todo, options).serializable_hash.to_json
         else
-            render json: {error: @todo.errors.messages }, status: 422
+            render json: { error: @todo.errors.messages }, status: 422
         end
     end
 
@@ -45,7 +44,7 @@ class Api::V1::TodosController < ApplicationController
         if @todo.destroy
             head :no_content, status: :ok
         else
-            render json: {error: @todo.error.messages }, status: 422
+            render json: { error: @todo.error.messages }, status: 422
         end
     end
 
@@ -56,7 +55,7 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def todo_params
-        params.require(:todo).permit(:title, :tag)
+        params.require(:todo).permit(:title, :tag, :done)
     end
 
 end

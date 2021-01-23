@@ -8,6 +8,8 @@ import Subtask from '../Todo-Subtask/Subtask';
 import axios from 'axios';
 import TodoSubtask from './TodoSubtask';
 import CardTags from './CardTags';
+import DeleteIcon from '@material-ui/icons/Delete';
+import RestoreIcon from '@material-ui/icons/Restore';
 
 const TodoTitle = styled.div`
     padding: 15px 0 15px 0;
@@ -47,9 +49,11 @@ interface TodoI {
     attributes: {
         title: string
         done: boolean
-        urgency: number
+        // urgency: number
         id: number
     }
+    handleCompleteTodo: (todo_id: string) => void
+    handleRestoreTodo: (todo_id: string) => void
     handleDeleteTodo: (todo_id: string, subtasks: Subtask[]) => void
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tagsChkbox: Record<string, boolean>
@@ -90,8 +94,17 @@ interface RawData {
     }
 };
 
-const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox, handleTagDelete, tags }: TodoI) => {
+const Todo = ({ attributes,
+    handleCompleteTodo,
+    handleDeleteTodo,
+    setTagsChkbox,
+    tagsChkbox,
+    handleTagDelete,
+    tags,
+    handleRestoreTodo
+}: TodoI) => {
     const todo_id: string = "" + attributes.id;
+    const done = attributes.done;
     const [subtasks, setSubtasks] = useState<Subtask[]>([]);
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
     const [buttonCompleted, setButtonCompleted] = useState(false);
@@ -137,6 +150,7 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox, handleT
                         key={subtask.id}
                         id={subtask.id}
                         todo_id={+todo_id}
+                        todoDone={done}
                         updateSubtask={updateSubtask}
                         attributes={subtask.attributes}
                     />
@@ -153,7 +167,13 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox, handleT
 
     return (
         <Fragment>
-            <TodoTitle>{attributes.title}</TodoTitle>
+            <TodoTitle
+                style={{ 
+                    textDecoration: done ? "line-through" : "",
+                    color: done? "#00030661" : ""
+                }}
+            >{attributes.title}</TodoTitle>
+
             {renderSubtasks}
 
             <CardTags
@@ -162,12 +182,13 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox, handleT
                 handleDelete={handleTagDelete}
             />
 
-            <Link to={`/todos/${attributes.id}`}>
+            {
+                done ?
                 <Button
-                    startIcon={<FormatListNumberedIcon/>}
+                    startIcon={<RestoreIcon/>}
                     variant="contained"
                     style={{
-                        backgroundColor: "rgb(204, 209, 255)",
+                        backgroundColor: "rgb(182, 255, 245)",
                         margin: 15,
                         marginLeft: "auto",
                         marginRight: "auto",
@@ -179,31 +200,79 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox, handleT
                         width: "95%",
                         fontWeight: "bold"
                     }}
+                    onClick={()=> handleRestoreTodo(todo_id)}
                 >
-                    View Task
+                    Restore Task
                 </Button>
-            </Link>
-            <Button
-                style={{
-                    backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",
-                    margin: 15,
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    position: "absolute",
-                    textAlign: "center",
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: "95%",
-                    fontWeight: "bold"
-                }}
-                startIcon={<DoneIcon/>}
-                disabled={!buttonCompleted}
-                variant="contained"
-                onClick= {() => handleDeleteTodo(todo_id, subtasks)}
-            >
-                Complete Task
-            </Button>
+                :
+                <Link to={`/todos/${attributes.id}`}>
+                    <Button
+                        startIcon={<FormatListNumberedIcon/>}
+                        variant="contained"
+                        style={{
+                            backgroundColor: "rgb(204, 209, 255)",
+                            margin: 15,
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            position: "absolute",
+                            bottom: 50,
+                            textAlign: "center",
+                            left: 0,
+                            right: 0,
+                            width: "95%",
+                            fontWeight: "bold"
+                        }}
+                    >
+                        View Task
+                    </Button>
+                </Link>
+            }
+            {
+                done ?
+                <Button
+                    style={{
+                        backgroundColor: "rgb(255, 105, 105)",
+                        margin: 15,
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        position: "absolute",
+                        textAlign: "center",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: "95%",
+                        fontWeight: "bold"
+                    }}
+                    startIcon={<DeleteIcon/>}
+                    disabled={!buttonCompleted}
+                    variant="contained"
+                    onClick= {() => handleDeleteTodo(todo_id, subtasks)}
+                >
+                    Delete Task
+                </Button>
+                :
+                <Button
+                    style={{
+                        backgroundColor: buttonCompleted ? "rgb(186, 255, 187)" : "",
+                        margin: 15,
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        position: "absolute",
+                        textAlign: "center",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        width: "95%",
+                        fontWeight: "bold"
+                    }}
+                    startIcon={<DoneIcon/>}
+                    disabled={!buttonCompleted}
+                    variant="contained"
+                    onClick= {() => handleCompleteTodo(todo_id)}
+                >
+                    Complete Task
+                </Button>
+            }
             <ButtonPlaceholder />
         </Fragment>
     );

@@ -57,6 +57,8 @@ interface TodoI {
     handleTagDelete: (tagId: string, tagName: string) => void
     sidebarAllTodoHandleClick: () => void
     sidebarHandleOnClick: (tagState: React.SetStateAction<{}>) => void
+    currentTab: string
+    setCurrentTab: React.Dispatch<React.SetStateAction<string>>
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -78,7 +80,9 @@ const Todo = ({
     match,
     sidebarAllTodoHandleClick,
     sidebarHandleOnClick,
-    handleTagDelete
+    handleTagDelete,
+    currentTab,
+    setCurrentTab
 }: TodoI) => {
     const { todo_id } = match.params;
     
@@ -203,6 +207,9 @@ const Todo = ({
                 items={tagsChkbox}
                 allTodoHandleClick={sidebarAllTodoHandleClick}
                 handleClick={sidebarHandleOnClick}
+
+                currentTab={currentTab}
+                setCurrentTab={setCurrentTab}
             />
             <Wrapper>
                 <div className={clsx(classes.content)}>

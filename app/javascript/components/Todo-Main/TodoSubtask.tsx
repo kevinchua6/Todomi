@@ -21,6 +21,7 @@ export interface TodoSubtaskI {
     id: string
     todo_id: number
     updateSubtask: (id: string, done: boolean) => void
+    todoDone: boolean
     attributes: {
         text: string
         done: boolean
@@ -28,7 +29,7 @@ export interface TodoSubtaskI {
     }
 };
 
-const TodoSubtask = ({ id, todo_id, updateSubtask, attributes }: TodoSubtaskI) => {
+const TodoSubtask = ({ id, todo_id, updateSubtask, attributes, todoDone }: TodoSubtaskI) => {
     const {text, done} = attributes;
     const [subtasktxt, setSubtasktxt] = useState(text);
     const [subtaskBool, setSubtaskBool] = useState(done);
@@ -39,27 +40,32 @@ const TodoSubtask = ({ id, todo_id, updateSubtask, attributes }: TodoSubtaskI) =
     };
 
     useEffect( () => {
-        const url: string = `/api/v1/subtasks/${id}`;
-        axios.patch(url, { done: subtaskBool })
+        axios.patch(`/api/v1/subtasks/${id}`, { done: subtaskBool })
             .catch( resp => console.log(resp) );
     }, [subtaskBool] );
 
     return (
-        <Wrapper style={{ backgroundColor: subtaskBool ? "#BCFFB6" : "#cbe4ff" }}>
-            <Checkbox 
-                name="subtaskCheckbox"
-                style={{ paddingTop: 4 }}
-                onChange={handleChangeCheckbox} 
-                checked={subtaskBool}
-                color="primary"
-            />
+        <Wrapper style={{ backgroundColor: todoDone ? "#C6E5FF" : subtaskBool ? "#BCFFB6" : "#cbe4ff" }}>
+            {
+                !todoDone 
+                ?
+                <Checkbox 
+                    name="subtaskCheckbox"
+                    style={{ paddingTop: 4 }}
+                    onChange={handleChangeCheckbox} 
+                    checked={subtaskBool}
+                    color="primary"
+                /> 
+                :
+                <Checkbox disabled checked inputProps={{ 'aria-label': 'disabled checked checkbox' }} />
+            }
             <SubtaskStyle 
                 style= {{
                     textDecoration: subtaskBool ? "line-through" : "",
                     opacity: subtaskBool ? 0.5 : 1,
                 }}
             >
-                {subtasktxt} 
+                {subtasktxt}
             </SubtaskStyle>
         </Wrapper>
     );
