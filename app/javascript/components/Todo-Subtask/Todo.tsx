@@ -146,6 +146,14 @@ const Todo = ({
         ));
     };
 
+    const handleSubtaskDelete = (id: string) => {
+        axios.delete(`/api/v1/subtasks/${id}`)
+            .then(resp => {
+                setSubtasks(subtasks.filter( (subtask: Subtask) =>  subtask.id != id ))
+            })
+            .catch(resp => console.log(resp))
+    };
+
     useEffect( () => {
         // Arranges subtasks in order when `subtasks` is modified
         const undoneSubtasks: Subtask[] = subtasks
@@ -163,6 +171,7 @@ const Todo = ({
                 updateSubtask={updateSubtask}
                 attributes={subtask.attributes}
                 loaded={loaded}
+                handleDelete={handleSubtaskDelete}
             />
         ) ));
     }, [loaded, subtasks] );

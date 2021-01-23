@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
-import Checkbox from '@material-ui/core/Checkbox';
-import TextField from '@material-ui/core/TextField';
+import { TextField, IconButton, Checkbox } from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
 
 const Wrapper = styled.div`
     padding-top: 10px;
+    border-radius: 5px;
 `;
+
+const DeleteIcon = styled(IconButton)`
+    margin: -10px 0 0 -45px;
+`
 
 export interface SubtaskI {
     id: string
@@ -19,13 +24,15 @@ export interface SubtaskI {
         todo_id: number
     }
     loaded: boolean
+    handleDelete: (id: string) => void
 };
 
-const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) => {
+const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded, handleDelete }: SubtaskI) => {
     const { text, done } = attributes;
     const [subtasktxt, setSubtasktxt] = useState(text);
     const [debouncedSubtasktxt] = useDebounce(subtasktxt, 100);
     const [subtaskBool, setSubtaskBool] = useState(done);
+    const [isMouseOver, setIsMouseOver] = useState(false);
 
     const handleChangeCheckbox = () => { 
         setSubtaskBool(!subtaskBool);
@@ -51,7 +58,7 @@ const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) =
     }, [debouncedSubtasktxt] );
 
     return (
-        <Wrapper>
+        <Wrapper style= {{ backgroundColor: subtaskBool ? "rgb(188, 255, 182)" : "#edf5ff" }}>
             <Checkbox 
                 style={{
                     paddingTop: 4
@@ -59,6 +66,8 @@ const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) =
                 onChange={handleChangeCheckbox} 
                 checked={subtaskBool}
                 color="primary"
+                onMouseEnter={()=>setIsMouseOver(true)}
+                onMouseLeave={()=>setIsMouseOver(false)}
             />
             <TextField 
                 inputProps={{
@@ -73,7 +82,19 @@ const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded }: SubtaskI) =
                 value={subtasktxt} 
                 type="text" 
                 name="title" 
+                onMouseEnter={()=>setIsMouseOver(true)}
+                onMouseLeave={()=>setIsMouseOver(false)}
             />
+            {    
+                isMouseOver && 
+                <DeleteIcon
+                    onClick={()=>handleDelete(id)}
+                    onMouseEnter={()=>setIsMouseOver(true)}
+                    onMouseLeave={()=>setIsMouseOver(false)}
+                >
+                    <ClearIcon style={{color: "#7d7d7d"}}/>
+                </DeleteIcon>
+            }
         </Wrapper>
     );
 };

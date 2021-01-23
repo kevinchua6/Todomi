@@ -209,7 +209,6 @@ const Todos = ({
         .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1) )
         .map( (todo, index) => {
             const subtaskNo = todo.relationships.subtasks.data.length
-            // const height = subtaskNo >= 5 ? 3 : 1
             let height: number;
             switch (subtaskNo) {
                 case 0:
