@@ -207,6 +207,8 @@ const Navbar = ({searchInput,
                             </ListItem>
                         ) )
                     }
+                    <Divider />
+
                     <ListItem button key={0} onClick={allTodoHandleClick}>
                         <ListItemIcon><CollectionsBookmarkIcon /></ListItemIcon>
                         <ListItemText>Uncheck All Tags</ListItemText>

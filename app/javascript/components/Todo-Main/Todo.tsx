@@ -231,7 +231,7 @@ const Todo = ({ attributes,
                 done ?
                 <Button
                     style={{
-                        backgroundColor: "rgb(255, 105, 105)",
+                        backgroundColor: "rgb(255, 142, 142)",
                         margin: 15,
                         marginLeft: "auto",
                         marginRight: "auto",

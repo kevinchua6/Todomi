@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
+  resources :users 
 
   get 'tags/create'
   get 'tags/destroy'
+  
   namespace :api do
     get 'subtasks/index'
     get 'subtasks/create'
@@ -15,8 +17,6 @@ Rails.application.routes.draw do
 
   get 'user_id' => "pages#user_id"
 
-  resources :users do
-  end
 
   namespace :api do
     namespace :v1 do
