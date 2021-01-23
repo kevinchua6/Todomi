@@ -6,8 +6,8 @@ import { TextField, IconButton, Checkbox } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 
 const Wrapper = styled.div`
-    padding-top: 10px;
-    border-radius: 5px;
+    padding: 5px 10px 5px 0;
+    border-radius: 2px;
 `;
 
 const DeleteIcon = styled(IconButton)`
@@ -35,6 +35,7 @@ const Subtask = ({ id, todo_id, updateSubtask, attributes, loaded, handleDelete 
     const [isMouseOver, setIsMouseOver] = useState(false);
 
     const handleChangeCheckbox = () => { 
+        setIsMouseOver(false);
         setSubtaskBool(!subtaskBool);
         updateSubtask(id, done);
     }

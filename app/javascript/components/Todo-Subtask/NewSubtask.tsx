@@ -16,7 +16,9 @@ const NewSubtask = ({ inputSubtasks, handleNewSubtaskChange, handleNewSubtaskKey
         <TextField 
             style={{
                 width: "100%",
-                height: "50%"
+                height: "50%",
+                marginTop: 15,
+                backgroundColor: "#edf5ff"
             }}
             inputProps={{ maxLength: 25 }}
             variant="outlined"

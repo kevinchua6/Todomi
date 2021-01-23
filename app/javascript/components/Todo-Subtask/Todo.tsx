@@ -27,7 +27,6 @@ const Title = styled.div`
     font-size: 50px;
     font-weight: bold;
 `;
-
 interface Subtask {
     id: string
     type: string
@@ -151,7 +150,7 @@ const Todo = ({
             .then(resp => {
                 setSubtasks(subtasks.filter( (subtask: Subtask) =>  subtask.id != id ))
             })
-            .catch(resp => console.log(resp))
+            .catch(resp => console.log(resp));
     };
 
     useEffect( () => {
@@ -231,8 +230,8 @@ const Todo = ({
                     <TextField 
                         style={{
                             width: "100%",
-                            margin: 5,
-                            marginBottom: 25
+                            margin: "5px 5px 25px 0",
+                            backgroundColor: "#edf5ff"
                         }}
                         inputProps={{ maxLength: 25 }}
                         variant="outlined"
