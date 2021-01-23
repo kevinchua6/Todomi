@@ -29,7 +29,8 @@ interface Todos {
         id: number
         tag: string
         order: number
-        user_id: number
+		user_id: number
+        subtaskno: number
     },
     relationships: {
         subtasks: {
@@ -164,6 +165,9 @@ const App = () => {
 
 						sidebarAllTodoHandleClick={sidebarAllTodoHandleClick}
 						sidebarHandleOnClick={sidebarHandleOnClick}
+
+						todos={todos}
+						setTodos={setTodos}
 
 						currentTab={currentTab}
 						setCurrentTab={setCurrentTab}

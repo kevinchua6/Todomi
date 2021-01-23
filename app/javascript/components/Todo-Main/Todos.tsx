@@ -41,6 +41,7 @@ export interface Todos {
         tag: string
         // order: number
         user_id: number
+        subtaskno: number
     },
     relationships: {
         subtasks: {
@@ -128,6 +129,18 @@ const Todos = ({
 }: TodosI) => {
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" });
 
+
+	useEffect( () => {
+        axios.get('/api/v1/todos')
+            .then( resp => {
+                const rawData = resp.data;
+                const todosArr: Todos[] = rawData.data.filter( (todo: Todos) => todo.attributes.user_id === userId );
+                setTodos(todosArr);
+            })
+            .catch( resp => console.log(resp) );
+	}, [] );
+
+
     const handleCompleteTodo = (todo_id: string) => {
         axios.patch(`/api/v1/todos/${todo_id}`, {done: true})
             .then( resp => {
@@ -183,6 +196,7 @@ const Todos = ({
     };
 
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
+    
     const grid = todos.slice()
         .filter( (todo: Todos) => {
             const tabBool = currentTab === "Homepage" 
@@ -205,9 +219,11 @@ const Todos = ({
         } )
         .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1) )
         .map( (todo, index) => {
-            const subtaskNo = todo.relationships.subtasks.data.length
+            const subtaskNo = todo.attributes.subtaskno;
+            console.log(subtaskNo);
             let height: number;
             switch (subtaskNo) {
+                case null:
                 case 0:
                     height = 1;
                     break;

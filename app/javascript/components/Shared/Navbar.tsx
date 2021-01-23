@@ -197,10 +197,7 @@ const Navbar = ({searchInput,
                         </ListItemText>
                     </ListItem>
 
-                    <ListItem button key={0} onClick={allTodoHandleClick}>
-                        <ListItemIcon><CollectionsBookmarkIcon /></ListItemIcon>
-                        <ListItemText>Uncheck All Tags</ListItemText>
-                    </ListItem>
+
                     <Divider />
                     {
                         Object.entries(items).map( ([tag, state], i) => (
@@ -210,6 +207,11 @@ const Navbar = ({searchInput,
                             </ListItem>
                         ) )
                     }
+                    <ListItem button key={0} onClick={allTodoHandleClick}>
+                        <ListItemIcon><CollectionsBookmarkIcon /></ListItemIcon>
+                        <ListItemText>Uncheck All Tags</ListItemText>
+                    </ListItem>
+
                 </List>
             </Drawer>
         </Fragment>

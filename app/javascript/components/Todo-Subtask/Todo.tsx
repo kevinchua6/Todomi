@@ -45,6 +45,34 @@ interface Tag {
         todo_id: number
     }
 };
+export interface Todos {
+    id: string
+    type: string
+    attributes: {
+        title: string
+        done: boolean
+        // urgency: number
+        id: number
+        tag: string
+        // order: number
+        user_id: number
+        subtaskno: number
+    },
+    relationships: {
+        subtasks: {
+            data: {
+                id: string
+                type: string
+            }[]
+        },
+        tags: {
+            data: {
+                id: string
+                type: string
+            }[]
+        }
+    }
+};
 interface TodoI {
     match: { params: { todo_id: string } }
     setSearchInput: React.Dispatch<React.SetStateAction<string>>
@@ -59,6 +87,8 @@ interface TodoI {
     sidebarHandleOnClick: (tagState: React.SetStateAction<{}>) => void
     currentTab: string
     setCurrentTab: React.Dispatch<React.SetStateAction<string>>
+    setTodos: React.Dispatch<React.SetStateAction<Todos[]>>
+    todos: Todos[]
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -82,7 +112,9 @@ const Todo = ({
     sidebarHandleOnClick,
     handleTagDelete,
     currentTab,
-    setCurrentTab
+    setCurrentTab,
+    todos,
+    setTodos
 }: TodoI) => {
     const { todo_id } = match.params;
     
@@ -101,10 +133,8 @@ const Todo = ({
     const classes = useStyles();
     useEffect( () => {
         // On render gets the todo and subtask info of the specified id
-        const url = `/api/v1/todos/${todo_id}`;
         (async () => {
-            const url = `/api/v1/todos/${todo_id}`
-            const { data: rawData } = await axios.get(url);
+            const { data: rawData } = await axios.get(`/api/v1/todos/${todo_id}`);
             console.log(rawData);
             setTodo(rawData.data.attributes);
             const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
@@ -122,20 +152,36 @@ const Todo = ({
     useEffect( () => {
         // Debounced saving of todo title
         if (loaded) {
-            const url = `/api/v1/todos/${todo_id}`;
-            axios.patch(url, {title: todo.title})
+            axios.patch(`/api/v1/todos/${todo_id}`, {title: todo.title})
                 .catch( resp => console.log(resp) );
         }
     }, [debouncedTodo] );
 
+    const getSubtaskNo = (todos: Todos[]) => {
+        let subtaskno: number;
+        todos.map(todo => {
+            if (todo.id === todo_id) {
+                subtaskno = todo.attributes.subtaskno;
+            }
+        });
+        return subtaskno;
+    }
+
     const handleNewSubtaskKeypress = (e: React.KeyboardEvent<Element>) => {
         // Does a post request of a new subtask upon pressing enter
         if (inputSubtasks.text !== "" && e.key === 'Enter') {
-            const url = '/api/v1/subtasks';
-            axios.post(url, inputSubtasks)
+            const newSubtaskno = getSubtaskNo(todos) + 1;
+            setTodos( todos.map (todo => 
+                todo.id === todo_id
+                    ? {...todo, attributes: {...todo.attributes, subtaskno: newSubtaskno} }
+                    : todo
+                ))
+            axios.post('/api/v1/subtasks', inputSubtasks)
                 .then(resp => {
-                    setSubtasks(subtasks.concat([resp.data.data]))
-                    setInputSubtasks({...inputSubtasks, text: '', done: false})
+                    setSubtasks(subtasks.concat([resp.data.data]));
+                    setInputSubtasks({...inputSubtasks, text: '', done: false});
+
+                    axios.patch(`/api/v1/todos/${todo_id}`, {subtaskno: newSubtaskno})
                 })
                 .catch( resp => console.log(resp) );
         }
@@ -154,9 +200,17 @@ const Todo = ({
     };
 
     const handleSubtaskDelete = (id: string) => {
+        const newSubtaskno = getSubtaskNo(todos) - 1;
+        setTodos( todos.map (todo => 
+            todo.id === todo_id
+                ? {...todo, attributes: {...todo.attributes, subtaskno: newSubtaskno} }
+                : todo
+            ))
+
         axios.delete(`/api/v1/subtasks/${id}`)
             .then(resp => {
-                setSubtasks(subtasks.filter( (subtask: Subtask) =>  subtask.id != id ))
+                setSubtasks(subtasks.filter( (subtask: Subtask) =>  subtask.id != id ));
+                axios.patch(`/api/v1/todos/${todo_id}`, {subtaskno: newSubtaskno})
             })
             .catch(resp => console.log(resp));
     };
