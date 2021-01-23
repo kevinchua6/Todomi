@@ -54,6 +54,7 @@ interface TodoI {
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tags: Tag[]
     setTags: React.Dispatch<React.SetStateAction<Tag[]>>
+    handleTagDelete: (tagId: string, tagName: string) => void
     sidebarAllTodoHandleClick: () => void
     sidebarHandleOnClick: (tagState: React.SetStateAction<{}>) => void
 };
@@ -76,9 +77,9 @@ const Todo = ({
     setTags,
     match,
     sidebarAllTodoHandleClick,
-    sidebarHandleOnClick 
+    sidebarHandleOnClick,
+    handleTagDelete
 }: TodoI) => {
-
     const { todo_id } = match.params;
     
     const [todo, setTodo] = useState<InputTodo>({ title: "" });
@@ -90,6 +91,7 @@ const Todo = ({
 
     const [inputSubtasks, setInputSubtasks] = useState({ text: '', done: false, todo_id: todo_id });
     const [inputTag, setInputTag] = useState({ name: '', todo_id: todo_id });
+    const [todoTags, setTodoTags] = useState<Tag[]>([])
 
 
     const classes = useStyles();
@@ -102,12 +104,14 @@ const Todo = ({
             console.log(rawData);
             setTodo(rawData.data.attributes);
             const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
-            const newTagsArr = rawData.included.filter( (tag: Tag) => tag.type === 'tag' );
             setSubtasks(newSubtasksArr);
-            setTags(newTagsArr);
             setLoaded(true);
         })();
     }, [] );
+
+    useEffect(() => {
+        setTodoTags(tags.filter( (tag: Tag) => tag.attributes.todo_id === +todo_id));
+    }, [tags]);
 
     const handleChangeTodo = (e: React.ChangeEvent<HTMLInputElement>) => { setTodo({ ...todo, title: e.target.value }); };
 
@@ -175,16 +179,6 @@ const Todo = ({
         ) ));
     }, [loaded, subtasks] );
 
-    const handleTagDelete = (tagId: string, tagName: string) => {
-        axios.delete(`/api/v1/tags/${tagId}`)
-            .then(resp => {
-                const newTagsChkbox = { ...tagsChkbox };
-                delete newTagsChkbox[tagName];
-                setTagsChkbox(newTagsChkbox);
-                setTags(tags.filter( (tag: Tag) => tag.id !== tagId) );
-            });
-    };
-
     const handleNewTagChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTag({ ...inputTag, name: e.target.value }) };
 
     const handleNewTagKeypress = (e: React.KeyboardEvent<Element>) => {
@@ -192,6 +186,7 @@ const Todo = ({
             axios.post('/api/v1/tags', inputTag)
                 .then(resp => {
                     setTags(tags.concat([resp.data.data]));
+                    setTodoTags(todoTags.concat([resp.data.data]))
                     setInputTag({...inputTag, name: '' });
                     setTagsChkbox({...tagsChkbox, [inputTag.name]: false });
                 })
@@ -217,7 +212,7 @@ const Todo = ({
                         handleKeypress={handleNewTagKeypress}
                         // handleClick={tagHandleClick}
                         inputTag={inputTag}
-                        tags={tags}
+                        tags={todoTags}
                     />
                     <Link to="/">
                         <ArrowBackIcon style={{

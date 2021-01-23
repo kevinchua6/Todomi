@@ -36,7 +36,6 @@ interface Subtask {
 };
 interface Tag {
     id: string
-    name: string
     type: string
     attributes: {
         name: string
@@ -54,6 +53,8 @@ interface TodoI {
     handleDeleteTodo: (todo_id: string, subtasks: Subtask[]) => void
     setTagsChkbox: React.Dispatch<React.SetStateAction<{}>>
     tagsChkbox: Record<string, boolean>
+    handleTagDelete: (tagId: string, tagName: string) => void
+    tags: Tag[]
 };
 
 interface RawData {
@@ -89,13 +90,13 @@ interface RawData {
     }
 };
 
-const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI) => {
+const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox, handleTagDelete, tags }: TodoI) => {
     const todo_id: string = "" + attributes.id;
     const [subtasks, setSubtasks] = useState<Subtask[]>([]);
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
     const [buttonCompleted, setButtonCompleted] = useState(false);
-    const [tags, setTags] = useState<Tag[]>([]);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    const [todoTags, setTodoTags] = useState<Tag[]>([])
 
     useEffect( () => {
         window.addEventListener('resize', () => setScreenWidth(window.innerWidth));
@@ -105,13 +106,13 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI
             const url = `/api/v1/todos/${todo_id}`;
             const { data: rawData } = await axios.get(url);
             const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
-            const newTags = rawData.included
-                .filter( (tag: Tag) => tag.type === 'tag' )
-                .map( (tag: Tag) => ({ id: tag.id, name: tag.attributes.name }) );
             setSubtasks(newSubtasks);
-            setTags(newTags);
         })();
     }, [] );
+
+    useEffect(() => {
+        setTodoTags(tags.filter( (tag: Tag) => tag.attributes.todo_id === +todo_id));
+    }, [tags]);
 
     const updateSubtask = (id: string, done: boolean) => {
         setSubtasks(subtasks.map(subtask => 
@@ -150,17 +151,6 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI
 
     }, [subtasks] );
 
-    const tagHandleDelete = (tagId: string, tagName: string) => {
-        const url = `/api/v1/tags/${tagId}`;
-        axios.delete(url)
-            .then(resp => {
-                const newTagsChkbox = { ...tagsChkbox };
-                delete newTagsChkbox[tagName];
-                setTagsChkbox(newTagsChkbox);
-                setTags(tags.filter( (tag: Tag) => tag.id !== tagId) );
-            });
-    }
-
     return (
         <Fragment>
             <TodoTitle>{attributes.title}</TodoTitle>
@@ -168,8 +158,8 @@ const Todo = ({ attributes, handleDeleteTodo, setTagsChkbox, tagsChkbox }: TodoI
 
             <CardTags
                 screenWidth={screenWidth}
-                tags={tags}
-                handleDelete={tagHandleDelete}
+                tags={todoTags}
+                handleDelete={handleTagDelete}
             />
 
             <Link to={`/todos/${attributes.id}`}>

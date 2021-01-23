@@ -10,7 +10,6 @@ const Wrapper = styled.div`
 
 interface Tag {
     id: string
-    name: string
     type: string
     attributes: {
         name: string
@@ -30,9 +29,9 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
     const columnWidth: number = (screenWidth - 240) / 5;
 
     const getNumOfTagsToDisplay = (tags: Tag[], maxWidth: number, lenBtwnChips: number) => {
-        let numOfTagsToDisplay = 0, currentLen = tags[0].name.length + lenBtwnChips;
+        let numOfTagsToDisplay = 0, currentLen = tags[0].attributes.name.length + lenBtwnChips;
         for (let i = 0; i < tags.length && currentLen < maxWidth; i++) {
-            const tagName = tags[i].name;
+            const tagName = tags[i].attributes.name;
             currentLen += tagName.length * 16 + lenBtwnChips;
             numOfTagsToDisplay++;
         }
@@ -51,8 +50,8 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
             {tagsDisplayed.map( (tag: Tag) => (
                 <Chip size='small' 
                     key={tag.id}
-                    label={tag.name}
-                    onDelete={ () => handleDelete(tag.id, tag.name)}
+                    label={tag.attributes.name}
+                    onDelete={ () => handleDelete(tag.id, tag.attributes.name)}
                 />
             ) )}
             {
@@ -83,8 +82,8 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
                                 tagsHidden.map( (tag: Tag) => (
                                     <Chip size='small' 
                                         key={tag.id}
-                                        label={tag.name}
-                                        onDelete={() => handleDelete(tag.id, tag.name)}
+                                        label={tag.attributes.name}
+                                        onDelete={() => handleDelete(tag.id, tag.attributes.name)}
                                     />
                                 ) )
                             }
