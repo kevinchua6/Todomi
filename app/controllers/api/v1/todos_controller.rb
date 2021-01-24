@@ -55,7 +55,7 @@ class Api::V1::TodosController < ApplicationController
     end
 
     def todo_params
-        params.require(:todo).permit(:title, :tag, :done, :subtaskno)
+        params.require(:todo).permit(:title, :tag, :done, :subtaskno, :date)
     end
 
 end

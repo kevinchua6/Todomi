@@ -30,7 +30,8 @@ interface Todos {
         tag: string
         order: number
 		user_id: number
-        subtaskno: number
+		subtaskno: number
+		date: string
     },
     relationships: {
         subtasks: {

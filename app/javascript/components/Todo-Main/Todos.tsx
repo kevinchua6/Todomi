@@ -7,6 +7,7 @@ import debounce from '../../utils/debounce';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import Navbar from '../Shared/Navbar';
 import '../../../assets/stylesheets/grid-styles.css';
+import { dark } from '@material-ui/core/styles/createPalette';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -42,6 +43,7 @@ export interface Todos {
         // order: number
         user_id: number
         subtaskno: number
+        date: string
     },
     relationships: {
         subtasks: {
@@ -81,7 +83,7 @@ export interface InputTodo {
     title: string
     done?: boolean
     id?: number
-    urgency?: number
+    date?: string
 };
 
 export interface SubtaskLength {
@@ -91,6 +93,9 @@ export interface SubtaskLength {
 export interface UserId {
     user_id: number
 };
+
+const tommorow = new Date();
+tommorow.setDate(tommorow.getDate() + 1);
 
 export interface TodosI {
     setSearchInput: React.Dispatch<React.SetStateAction<string>>
@@ -127,7 +132,26 @@ const Todos = ({
     currentTab,
     setCurrentTab
 }: TodosI) => {
-    const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "" });
+
+    const dateObjToYYYYMMDD = (date: Date) => {
+        const mm = date.getMonth() + 1;
+        const dd = date.getDate();
+        return [date.getFullYear(),
+                (mm > 9 ? '' : '0') + mm,
+                (dd > 9 ? '' : '0') + dd
+            ].join('-');
+    };
+
+    const setToStartOfDay = (date: Date) => {
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        return date;
+    }
+
+    const todayDate = new Date();
+    
+    const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "", date: dateObjToYYYYMMDD(tommorow) });
 
 
 	useEffect( () => {
@@ -219,8 +243,11 @@ const Todos = ({
         } )
         .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1) )
         .map( (todo, index) => {
-            const subtaskNo = todo.attributes.subtaskno;
-            console.log(subtaskNo);
+            const subtaskNo: number = todo.attributes.subtaskno;
+            const dueDate: Date = new Date(todo.attributes.date);
+            setToStartOfDay(dueDate);
+            const isDue: Boolean = dueDate <= todayDate;
+
             let height: number;
             switch (subtaskNo) {
                 case null:
@@ -245,7 +272,7 @@ const Todos = ({
             return (
                 <div
                     key={todo_id} 
-                    style={{ backgroundColor: "#91c5ff", borderRadius: 5 }}
+                    style={{ backgroundColor: isDue ? "#ff8c8c" : "#91c5ff", borderRadius: 5 }}
                     data-grid={{ x: x, y: y, w: 1, h: height }}
                 >
                     <Todo
@@ -264,16 +291,17 @@ const Todos = ({
 
     const inputTodoHandleKeypress = (e: React.KeyboardEvent<Element>) => {
         if (inputTodo.title !== "" && e.key === 'Enter') {
+            console.log(inputTodo)
             axios.post('/api/v1/todos', inputTodo)
                 .then(resp => {
                     setTodos(todos.concat(resp.data.data));
-                    setInputTodo({title: ''});
+                    setInputTodo({...inputTodo, title: ''});
                 })
                 .catch( resp => console.log(resp) );
         }
     };
 
-    const inputTodoHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({title: e.target.value}); };
+    const inputTodoHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInputTodo({...inputTodo, title: e.target.value}); };
 
     const csrfToken = document.querySelector('[name=csrf-token]').getAttribute('content');
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;

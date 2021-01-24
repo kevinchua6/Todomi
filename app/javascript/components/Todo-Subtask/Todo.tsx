@@ -12,6 +12,7 @@ import Navbar from '../Shared/Navbar';
 import clsx from 'clsx';;
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
 import Tags from './Tags';
+import DatePicker from './DatePicker';
 
 const Wrapper = styled.div`
     padding-top: 20px;
@@ -26,6 +27,9 @@ const Title = styled.div`
     padding-bottom: 40px;
     font-size: 50px;
     font-weight: bold;
+`;
+const DatePickerWrapper = styled.div`
+    float: right;
 `;
 interface Subtask {
     id: string
@@ -96,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
         content: {
             padding: 44,
             paddingTop: 50
-        },
+        }
     }
 ));
 
@@ -129,6 +133,7 @@ const Todo = ({
     const [inputTag, setInputTag] = useState({ name: '', todo_id: todo_id });
     const [todoTags, setTodoTags] = useState<Tag[]>([])
 
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
     const classes = useStyles();
     useEffect( () => {
@@ -140,6 +145,13 @@ const Todo = ({
             const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
             setSubtasks(newSubtasksArr);
             setLoaded(true);
+            const date = rawData.data.attributes.date
+            console.log(date)
+            if (date !== null) {
+                const newDate = new Date(date);
+                console.log(newDate)
+                setSelectedDate(new Date(date))
+            }
         })();
     }, [] );
 
@@ -282,6 +294,13 @@ const Todo = ({
                             color: "black"
                         }} />
                     </Link>
+                    <DatePickerWrapper>
+                        <DatePicker 
+                            todo_id={todo_id}
+                            setSelectedDate={setSelectedDate}
+                            selectedDate={selectedDate}
+                        />
+                    </DatePickerWrapper>
                     <Title> Edit Task </Title>
                     <TextField 
                         style={{

@@ -1,7 +1,7 @@
 class TodoSerializer
   include JSONAPI::Serializer
   # Remember to remove :user_id after testing is done
-  attributes :title, :id, :tag, :user_id, :done, :subtaskno
+  attributes :title, :id, :tag, :user_id, :done, :subtaskno, :date
 
   has_many :tags
   has_many :subtasks
