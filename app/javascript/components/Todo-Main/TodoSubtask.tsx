@@ -22,6 +22,7 @@ export interface TodoSubtaskI {
     todo_id: number
     updateSubtask: (id: string, done: boolean) => void
     todoDone: boolean
+    isDue: boolean
     attributes: {
         text: string
         done: boolean
@@ -29,7 +30,7 @@ export interface TodoSubtaskI {
     }
 };
 
-const TodoSubtask = ({ id, todo_id, updateSubtask, attributes, todoDone }: TodoSubtaskI) => {
+const TodoSubtask = ({ id, todo_id, updateSubtask, attributes, todoDone, isDue }: TodoSubtaskI) => {
     const {text, done} = attributes;
     const [subtasktxt, setSubtasktxt] = useState(text);
     const [subtaskBool, setSubtaskBool] = useState(done);
@@ -45,14 +46,21 @@ const TodoSubtask = ({ id, todo_id, updateSubtask, attributes, todoDone }: TodoS
     }, [subtaskBool] );
 
     return (
-        <Wrapper style={{ backgroundColor: todoDone ? "#C6E5FF" : subtaskBool ? "#BCFFB6" : "#cbe4ff" }}>
+        <Wrapper style={{ 
+            backgroundColor: todoDone ? "rgba(255, 255, 255, 0.52)" 
+                : subtaskBool 
+                ? "#BCFFB6" 
+                : isDue
+                ? "#ffcbcb"
+                : "#cbe4ff" 
+        }}>
             {
                 !todoDone 
                 ?
                 <Checkbox 
                     name="subtaskCheckbox"
                     style={{ paddingTop: 4 }}
-                    onChange={handleChangeCheckbox} 
+                    onChange={handleChangeCheckbox}
                     checked={subtaskBool}
                     color="primary"
                 /> 

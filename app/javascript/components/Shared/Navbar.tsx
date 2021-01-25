@@ -18,6 +18,14 @@ const LogoHome = styled(Link)`
     font-family: 'Montserrat',sans-serif;
     margin-left: 10px;
 `
+const TagsWrapper = styled.div`
+    background-color: #ddefff;
+`
+const Margin = styled.div`
+    height: 5px;
+    background-color: white;
+
+`
 
 const drawerWidth: number = 240
 
@@ -88,6 +96,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface TagStates extends Record<string, boolean> {}
+
 interface NavbarI {
     searchInput: string,
     setSearchInput: React.Dispatch<React.SetStateAction<string>>,
@@ -116,6 +125,20 @@ const Navbar = ({searchInput,
     const handleCompletedTasksClick = () => {
       setCurrentTab("Completed Tasks");
     }
+
+    const renderTags = (Object.entries(items).length > 0 ) 
+        ? Object.entries(items).map( ([tag, state], i) => (
+            <ListItem button key={i+1} onClick={() => handleClick({ [tag]: !state })}>
+                <ListItemIcon><Checkbox color="primary" checked={state}/></ListItemIcon>
+                <ListItemText primary={tag} />
+            </ListItem>
+        ) )
+        : (
+            <ListItem >
+                <ListItemText> You don't have any tags. <br/>Try adding some by clicking View Task, then going to Add tag!</ListItemText>
+            </ListItem>
+        )
+    
 
     return (
         <Fragment>
@@ -187,32 +210,39 @@ const Navbar = ({searchInput,
                         <ListItemText>Completed Tasks</ListItemText>
                     </ListItem>
 
-                    <Divider />
-
-                    <ListItem>
-                        <ListItemText
-                          classes={{primary: classes.listItemText}}
-                        >
-                          Tags
-                        </ListItemText>
-                    </ListItem>
+                    <Divider
+                        style={{
+                            backgroundColor: "rgba(0, 0, 0, 0.24)"
+                        }}
+                    />
 
 
-                    <Divider />
-                    {
-                        Object.entries(items).map( ([tag, state], i) => (
-                            <ListItem button key={i+1} onClick={() => handleClick({ [tag]: !state })}>
-                                <ListItemIcon><Checkbox color="primary" checked={state}/></ListItemIcon>
-                                <ListItemText primary={tag} />
-                            </ListItem>
-                        ) )
-                    }
-                    <Divider />
+                    <TagsWrapper>
+                        <ListItem>
+                            <ListItemText
+                                classes={{primary: classes.listItemText}}
+                            >
+                            Tags
+                            </ListItemText>
+                        </ListItem>
 
-                    <ListItem button key={0} onClick={allTodoHandleClick}>
-                        <ListItemIcon><CollectionsBookmarkIcon /></ListItemIcon>
-                        <ListItemText>Uncheck All Tags</ListItemText>
-                    </ListItem>
+
+                        <Divider />
+                        
+                        { renderTags }
+
+                        <Divider />
+
+                        <ListItem button key={0} onClick={allTodoHandleClick}>
+                            <ListItemIcon><CollectionsBookmarkIcon /></ListItemIcon>
+                            <ListItemText>Uncheck All Tags</ListItemText>
+                        </ListItem>
+                    </TagsWrapper>
+                    <Divider
+                        style={{
+                            backgroundColor: "rgba(0, 0, 0, 0.24)"
+                        }}
+                    />
 
                 </List>
             </Drawer>

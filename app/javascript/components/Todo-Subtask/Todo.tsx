@@ -19,7 +19,6 @@ const Wrapper = styled.div`
     padding-bottom: 30px;
     width: 55%;
     margin: auto;
-    background-color: #cbe4ff;
     border-radius: 20px;
 `;
 const Title = styled.div`
@@ -133,7 +132,9 @@ const Todo = ({
     const [inputTag, setInputTag] = useState({ name: '', todo_id: todo_id });
     const [todoTags, setTodoTags] = useState<Tag[]>([])
 
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+    const [isDue, setIsDue] = useState<boolean>(false);
 
     const classes = useStyles();
     useEffect( () => {
@@ -154,6 +155,22 @@ const Todo = ({
             }
         })();
     }, [] );
+
+    const setToStartOfDay = (date: Date) => {
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        return date;
+    }
+
+    const todayDate = new Date();
+
+    useEffect( () => {
+        if (selectedDate){
+            setToStartOfDay(selectedDate);
+            setIsDue(selectedDate <= todayDate);
+        }
+    }, [selectedDate]);
 
     useEffect(() => {
         setTodoTags(tags.filter( (tag: Tag) => tag.attributes.todo_id === +todo_id));
@@ -277,7 +294,11 @@ const Todo = ({
                 currentTab={currentTab}
                 setCurrentTab={setCurrentTab}
             />
-            <Wrapper>
+            <Wrapper
+                style={{
+                    backgroundColor: isDue ? "#ffcbcb" : "#cbe4ff",
+                }}
+            >
                 <div className={clsx(classes.content)}>
                     <Tags
                         handleDelete={handleTagDelete}
@@ -306,7 +327,7 @@ const Todo = ({
                         style={{
                             width: "100%",
                             margin: "5px 5px 25px 0",
-                            backgroundColor: "#edf5ff"
+                            backgroundColor: isDue ? "#ffebeb" :"#edf5ff"
                         }}
                         inputProps={{ maxLength: 25 }}
                         variant="outlined"
@@ -320,6 +341,7 @@ const Todo = ({
                     { loaded && renderSubtasks }
                     <br/>
                     <NewSubtask
+                        isDue={isDue}
                         inputSubtasks={inputSubtasks}
                         handleNewSubtaskKeypress={handleNewSubtaskKeypress}
                         handleNewSubtaskChange={handleNewSubtaskChange}

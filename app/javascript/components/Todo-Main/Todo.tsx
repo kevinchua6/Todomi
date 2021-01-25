@@ -12,7 +12,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import RestoreIcon from '@material-ui/icons/Restore';
 
 const TodoTitle = styled.div`
-    padding: 15px 0 15px 0;
+    padding: 0px 0 15px 0;
     font-size: 22px;
 `;
 const Ellipsis = styled.div`
@@ -26,6 +26,15 @@ const ButtonPlaceholder = styled.div`
     margin-left: auto;
     margin-right: auto;
 `;
+const DueDateWrapper = styled.div`
+    color: #00000091;
+    height: 15px;
+    padding-bottom: 3px;
+    background-color: #ffffff42;
+`
+const EmptyDueDateWrapper = styled.div`
+    height: 18px;
+`
 
 interface Subtask {
     id: string
@@ -59,6 +68,8 @@ interface TodoI {
     tagsChkbox: Record<string, boolean>
     handleTagDelete: (tagId: string, tagName: string) => void
     tags: Tag[]
+    isDue: boolean
+    dueDate: string
 };
 
 interface RawData {
@@ -101,7 +112,9 @@ const Todo = ({ attributes,
     tagsChkbox,
     handleTagDelete,
     tags,
-    handleRestoreTodo
+    handleRestoreTodo,
+    isDue,
+    dueDate
 }: TodoI) => {
     const todo_id: string = "" + attributes.id;
     const done = attributes.done;
@@ -109,7 +122,16 @@ const Todo = ({ attributes,
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
     const [buttonCompleted, setButtonCompleted] = useState(false);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const [todoTags, setTodoTags] = useState<Tag[]>([])
+    const [todoTags, setTodoTags] = useState<Tag[]>([]);
+
+    const convertToConventionalDate = (datestring: string) => {
+        const year = datestring.slice(0,4);
+        const month = datestring.slice(5,7);
+        const day = datestring.slice(8,10);
+        return [day, month, year].join("/");
+    }
+
+    const conventionalDueDate = dueDate ? convertToConventionalDate(dueDate) : null;
 
     useEffect( () => {
         window.addEventListener('resize', () => setScreenWidth(window.innerWidth));
@@ -153,6 +175,7 @@ const Todo = ({ attributes,
                         todoDone={done}
                         updateSubtask={updateSubtask}
                         attributes={subtask.attributes}
+                        isDue={isDue}
                     />
                 )
                 : index == maxNoSubtask
@@ -165,8 +188,25 @@ const Todo = ({ attributes,
 
     }, [subtasks] );
 
+    const renderDueDate = dueDate && isDue ? (
+        <DueDateWrapper>
+            Due on {conventionalDueDate}!!!
+        </DueDateWrapper>
+    ) 
+    : dueDate
+    ? (
+        <DueDateWrapper>
+            Due on {conventionalDueDate}
+        </DueDateWrapper>
+    )
+    
+    : <EmptyDueDateWrapper/>
+
     return (
         <Fragment>
+            
+            {renderDueDate}
+
             <TodoTitle
                 style={{ 
                     textDecoration: done ? "line-through" : "",

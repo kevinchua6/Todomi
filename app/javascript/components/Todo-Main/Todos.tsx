@@ -30,6 +30,11 @@ const Subheader = styled.div`
     font-size: 23px;
     padding-bottom: 30px;
 `;
+const Notifications = styled.div`
+    font-family: 'Montserrat',sans-serif;
+    font-size: 20px;
+    padding-top: 20px;
+`
 
 export interface Todos {
     id: string
@@ -94,9 +99,6 @@ export interface UserId {
     user_id: number
 };
 
-const tommorow = new Date();
-tommorow.setDate(tommorow.getDate() + 1);
-
 export interface TodosI {
     setSearchInput: React.Dispatch<React.SetStateAction<string>>
     searchInput: string
@@ -133,15 +135,6 @@ const Todos = ({
     setCurrentTab
 }: TodosI) => {
 
-    const dateObjToYYYYMMDD = (date: Date) => {
-        const mm = date.getMonth() + 1;
-        const dd = date.getDate();
-        return [date.getFullYear(),
-                (mm > 9 ? '' : '0') + mm,
-                (dd > 9 ? '' : '0') + dd
-            ].join('-');
-    };
-
     const setToStartOfDay = (date: Date) => {
         date.setHours(0);
         date.setMinutes(0);
@@ -151,7 +144,7 @@ const Todos = ({
 
     const todayDate = new Date();
     
-    const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "", date: dateObjToYYYYMMDD(tommorow) });
+    const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "", date: null });
 
 
 	useEffect( () => {
@@ -163,7 +156,6 @@ const Todos = ({
             })
             .catch( resp => console.log(resp) );
 	}, [] );
-
 
     const handleCompleteTodo = (todo_id: string) => {
         axios.patch(`/api/v1/todos/${todo_id}`, {done: true})
@@ -221,7 +213,18 @@ const Todos = ({
 
     // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
     
-    const grid = todos.slice()
+    const noTodosInSection = (todos: Todos[], section: string) => { 
+        return todos.filter( (todo: Todos) => 
+            section === "Homepage"
+                ? !todo.attributes.done
+                : todo.attributes.done
+         ).length
+    }
+
+    const noHomepageTodos = noTodosInSection(todos, "Homepage");
+    const noCompletedTodos = noTodosInSection(todos, "Completed Tasks");
+
+    const grid = todos
         .filter( (todo: Todos) => {
             const tabBool = currentTab === "Homepage" 
                 ? !todo.attributes.done
@@ -244,9 +247,16 @@ const Todos = ({
         .sort( (a, b) => (a.attributes.id > b.attributes.id ? 1 : -1) )
         .map( (todo, index) => {
             const subtaskNo: number = todo.attributes.subtaskno;
-            const dueDate: Date = new Date(todo.attributes.date);
-            setToStartOfDay(dueDate);
-            const isDue: Boolean = dueDate <= todayDate;
+            let isDue: boolean;
+            const dueDate: string = todo.attributes.date;
+            const dueDateObj: Date = new Date(dueDate);
+
+            if (dueDate) {
+                setToStartOfDay(dueDateObj);
+                isDue = dueDateObj <= todayDate;
+            } else {
+                isDue = false;
+            }
 
             let height: number;
             switch (subtaskNo) {
@@ -284,6 +294,8 @@ const Todos = ({
                         setTagsChkbox={setTagsChkbox}
                         tagsChkbox={tagsChkbox}
                         handleTagDelete={handleTagDelete}
+                        isDue={isDue}
+                        dueDate={dueDate}
                     />
                 </div>
             );
@@ -330,14 +342,20 @@ const Todos = ({
                     handleChange = {inputTodoHandleChange}
                 />
                 { 
-                    loaded && 
-                    <ResponsiveGridLayout
-                        rowHeight={190}
-                        breakpoints={{lg: 1900, md: 996, sm: 768, xs: 480, xxs: 0}}
-                        cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
-                    >
-                        {grid}
-                    </ResponsiveGridLayout>
+                    currentTab === "Homepage" && noHomepageTodos === 0
+                    ? <Notifications> You have no Tasks! Create some above! </Notifications>
+                    : currentTab === "Completed Tasks" && noCompletedTodos === 0
+                    ? <Notifications> You have no Completed Tasks! Go accomplish something! </Notifications>
+                    : loaded
+                    ?   <ResponsiveGridLayout
+                            rowHeight={190}
+                            breakpoints={{lg: 1900, md: 996, sm: 768, xs: 480, xxs: 0}}
+                            cols={{lg: 5, md: 5, sm: 5, xs: 4, xxs: 2}}
+                        >
+                            {grid}
+                        </ResponsiveGridLayout>
+                    : null
+
                 }
             </Home>
         </Fragment>

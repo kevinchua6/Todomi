@@ -9,16 +9,17 @@ export interface NewSubtaskI {
     }
     handleNewSubtaskKeypress: (e: React.KeyboardEvent<Element>) => void
     handleNewSubtaskChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    isDue: boolean
 };
 
-const NewSubtask = ({ inputSubtasks, handleNewSubtaskChange, handleNewSubtaskKeypress }: NewSubtaskI) => {
+const NewSubtask = ({ inputSubtasks, handleNewSubtaskChange, handleNewSubtaskKeypress, isDue }: NewSubtaskI) => {
     return (
         <TextField 
             style={{
                 width: "100%",
                 height: "50%",
                 marginTop: 15,
-                backgroundColor: "#edf5ff"
+                backgroundColor: isDue ? "#ffebeb" :"#edf5ff"
             }}
             inputProps={{ maxLength: 25 }}
             variant="outlined"
