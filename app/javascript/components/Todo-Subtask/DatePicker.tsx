@@ -43,6 +43,7 @@ const DatePicker = ({selectedDate, setSelectedDate, todo_id}) => {
               'aria-label': 'change date',
             }}
             minDate={new Date()}
+            minDateMessage={"Your Task is due!!!"}
           />
         </MuiPickersUtilsProvider>
     )

@@ -211,13 +211,13 @@ const Todos = ({
         return tags.filter( (tag: Tag) => tag.attributes.todo_id === todo_id );
     };
 
-    // Sort via ascending order (Add a button to swap the order and drag and drop in the future)
-    
     const noTodosInSection = (todos: Todos[], section: string) => { 
         return todos.filter( (todo: Todos) => 
             section === "Homepage"
                 ? !todo.attributes.done
-                : todo.attributes.done
+                : section === "Completed Tasks"
+                ? todo.attributes.done
+                : false
          ).length
     }
 
@@ -303,7 +303,6 @@ const Todos = ({
 
     const inputTodoHandleKeypress = (e: React.KeyboardEvent<Element>) => {
         if (inputTodo.title !== "" && e.key === 'Enter') {
-            console.log(inputTodo)
             axios.post('/api/v1/todos', inputTodo)
                 .then(resp => {
                     setTodos(todos.concat(resp.data.data));
