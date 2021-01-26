@@ -21,11 +21,6 @@ const LogoHome = styled(Link)`
 const TagsWrapper = styled.div`
     background-color: #ddefff;
 `
-const Margin = styled.div`
-    height: 5px;
-    background-color: white;
-
-`
 
 const drawerWidth: number = 240
 
