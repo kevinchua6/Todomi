@@ -14,7 +14,7 @@ const DeleteIcon = styled(IconButton)`
     margin: -10px 0 0 -45px;
 `
 
-export interface SubtaskI {
+interface SubtaskI {
     id: string
     todo_id: number | undefined
     updateSubtask: (id: string, done: boolean) => void

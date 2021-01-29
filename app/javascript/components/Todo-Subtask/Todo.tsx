@@ -48,16 +48,14 @@ interface Tag {
         todo_id: number
     }
 };
-export interface Todos {
+interface Todos {
     id: string
     type: string
     attributes: {
         title: string
         done: boolean
-        // urgency: number
         id: number
         tag: string
-        // order: number
         user_id: number
         subtaskno: number
     },
@@ -141,17 +139,14 @@ const Todo = ({
         // On render gets the todo and subtask info of the specified id
         (async () => {
             const { data: rawData } = await axios.get(`/api/v1/todos/${todo_id}`);
-            console.log(rawData);
             setTodo(rawData.data.attributes);
             const newSubtasksArr = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
             setSubtasks(newSubtasksArr);
             setLoaded(true);
             const date = rawData.data.attributes.date
-            console.log(date)
             if (date !== null) {
                 const newDate = new Date(date);
-                console.log(newDate)
-                setSelectedDate(new Date(date))
+                setSelectedDate(new Date(date));
             }
         })();
     }, [] );
@@ -204,7 +199,7 @@ const Todo = ({
                 todo.id === todo_id
                     ? {...todo, attributes: {...todo.attributes, subtaskno: newSubtaskno} }
                     : todo
-                ))
+                ));
             axios.post('/api/v1/subtasks', inputSubtasks)
                 .then(resp => {
                     setSubtasks(subtasks.concat([resp.data.data]));
@@ -234,7 +229,7 @@ const Todo = ({
             todo.id === todo_id
                 ? {...todo, attributes: {...todo.attributes, subtaskno: newSubtaskno} }
                 : todo
-            ))
+            ));
 
         axios.delete(`/api/v1/subtasks/${id}`)
             .then(resp => {

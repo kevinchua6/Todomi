@@ -32,7 +32,7 @@ interface TagI {
 };
 
 const Tags = ({ tags, handleDelete, handleChange, handleKeypress, inputTag }: TagI) => {
-    const tagsDisplayed = tags.slice().sort();
+    const tagsDisplayed: Tag[] = tags.slice().sort();
     
     return (
         <Wrapper>

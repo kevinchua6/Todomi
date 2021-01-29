@@ -1,16 +1,19 @@
 import 'date-fns';
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
-    KeyboardTimePicker,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import axios from 'axios';
 
+interface DatePickerI {
+  todo_id: string
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>
+  selectedDate: Date
+}
 
-const DatePicker = ({selectedDate, setSelectedDate, todo_id}) => {
+const DatePicker = ({selectedDate, setSelectedDate, todo_id}: DatePickerI) => {
 
     const dateObjToYYYYMMDD = (date: Date) => {
         const mm = date.getMonth() + 1;
@@ -22,11 +25,9 @@ const DatePicker = ({selectedDate, setSelectedDate, todo_id}) => {
     };
 
     const handleDateChange = (date: Date | null) => {
-        axios.patch(`/api/v1/todos/${todo_id}`, {date: dateObjToYYYYMMDD(date) })
+        axios.patch(`/api/v1/todos/${todo_id}`, {date: dateObjToYYYYMMDD(date) });
         setSelectedDate(date);
     };
-
-    console.log(selectedDate)
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -46,10 +47,7 @@ const DatePicker = ({selectedDate, setSelectedDate, todo_id}) => {
             minDateMessage={"Your Task is due!!!"}
           />
         </MuiPickersUtilsProvider>
-    )
-
-
-    
+    );
 }
 
 export default DatePicker;

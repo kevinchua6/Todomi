@@ -17,7 +17,7 @@ const SubtaskStyle = styled.div`
     padding-top: 5px;
 `;
 
-export interface TodoSubtaskI {
+interface TodoSubtaskI {
     id: string
     todo_id: number
     updateSubtask: (id: string, done: boolean) => void

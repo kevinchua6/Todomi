@@ -58,7 +58,6 @@ interface TodoI {
     attributes: {
         title: string
         done: boolean
-        // urgency: number
         id: number
     }
     handleCompleteTodo: (todo_id: string) => void
@@ -117,7 +116,7 @@ const Todo = ({ attributes,
     dueDate
 }: TodoI) => {
     const todo_id: string = "" + attributes.id;
-    const done = attributes.done;
+    const done: boolean = attributes.done;
     const [subtasks, setSubtasks] = useState<Subtask[]>([]);
     const [renderSubtasks, setRenderSubtasks] = useState<JSX.Element[]>([]);
     const [buttonCompleted, setButtonCompleted] = useState(false);
@@ -125,9 +124,9 @@ const Todo = ({ attributes,
     const [todoTags, setTodoTags] = useState<Tag[]>([]);
 
     const convertToConventionalDate = (datestring: string) => {
-        const year = datestring.slice(0,4);
-        const month = datestring.slice(5,7);
-        const day = datestring.slice(8,10);
+        const year: string = datestring.slice(0,4);
+        const month: string = datestring.slice(5,7);
+        const day: string = datestring.slice(8,10);
         return [day, month, year].join("/");
     }
 
@@ -138,8 +137,7 @@ const Todo = ({ attributes,
 
         (async () => {
             // Get Subtasks for each Todo
-            const url = `/api/v1/todos/${todo_id}`;
-            const { data: rawData } = await axios.get(url);
+            const { data: rawData } = await axios.get(`/api/v1/todos/${todo_id}`);
             const newSubtasks = rawData.included.filter( (subtask: Subtask) => subtask.type === 'subtask' );
             setSubtasks(newSubtasks);
         })();
@@ -188,7 +186,8 @@ const Todo = ({ attributes,
 
     }, [subtasks] );
 
-    const renderDueDate = dueDate && isDue ? (
+    const renderDueDate = dueDate && isDue ? 
+    (
         <DueDateWrapper>
             Due on {conventionalDueDate}!!!
         </DueDateWrapper>
@@ -199,7 +198,6 @@ const Todo = ({ attributes,
             Due on {conventionalDueDate}
         </DueDateWrapper>
     )
-    
     : <EmptyDueDateWrapper/>
 
     return (

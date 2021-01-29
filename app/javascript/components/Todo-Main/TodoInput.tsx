@@ -12,7 +12,7 @@ const InputTodo = styled.input`
     box-sizing: border-box;
 `;
 
-export interface TodoInput {
+interface TodoInput {
     inputTodo: { title: string }
     handleKeypress: (e: React.KeyboardEvent<Element>) => void
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void

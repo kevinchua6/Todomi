@@ -35,6 +35,12 @@ const Notifications = styled.div`
     font-size: 20px;
     padding-top: 20px;
 `
+export interface InputTodo {
+    title: string
+    done?: boolean
+    id?: number
+    date?: string
+};
 
 export interface Todos {
     id: string
@@ -42,10 +48,8 @@ export interface Todos {
     attributes: {
         title: string
         done: boolean
-        // urgency: number
         id: number
         tag: string
-        // order: number
         user_id: number
         subtaskno: number
         date: string
@@ -66,7 +70,7 @@ export interface Todos {
     }
 };
 
-export interface Subtask {
+interface Subtask {
     id: string
     type: string
     attributes: {
@@ -75,31 +79,17 @@ export interface Subtask {
         todo_id: number
     }    
 };
-export interface Tag {
+interface Tag {
     id: string
     type: string
+    name: string
     attributes: {
         name: string
         todo_id: number
     }
 };
 
-export interface InputTodo {
-    title: string
-    done?: boolean
-    id?: number
-    date?: string
-};
-
-export interface SubtaskLength {
-    length: number
-};
-
-export interface UserId {
-    user_id: number
-};
-
-export interface TodosI {
+interface TodosI {
     setSearchInput: React.Dispatch<React.SetStateAction<string>>
     searchInput: string
     tagsChkbox: Record<string, boolean>
@@ -143,9 +133,7 @@ const Todos = ({
     }
 
     const todayDate = new Date();
-    
     const [inputTodo, setInputTodo] = useState<InputTodo>({ title: "", date: null });
-
 
 	useEffect( () => {
         axios.get('/api/v1/todos')

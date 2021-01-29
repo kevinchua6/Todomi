@@ -16,6 +16,7 @@ interface Tag {
         todo_id: number
     }
 };
+
 interface CardTagsI {
     tags: Tag[]
     screenWidth: number
@@ -38,9 +39,9 @@ const CardTags = ({tags, screenWidth, handleDelete}: CardTagsI) => {
         return numOfTagsToDisplay;
     }
 
-    const tagsDisplayed = tags.slice().sort();
-    const numOfTagsToDisplay = getNumOfTagsToDisplay(tagsDisplayed, columnWidth - 70, 14);
-    const tagsHidden = tagsDisplayed.splice(numOfTagsToDisplay);
+    const tagsDisplayed: Tag[] = tags.slice().sort();
+    const numOfTagsToDisplay: number = getNumOfTagsToDisplay(tagsDisplayed, columnWidth - 70, 14);
+    const tagsHidden: Tag[] = tagsDisplayed.splice(numOfTagsToDisplay);
 
     const handleClick = ({ currentTarget }: React.MouseEvent<HTMLDivElement, MouseEvent>) => { setAnchorEl(currentTarget) };
     const handleClose = () => { setAnchorEl(null) };
