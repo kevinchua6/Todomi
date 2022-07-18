@@ -25,7 +25,7 @@
     "react-dom": "^17.0.1",
     "react-grid-layout": "^1.2.0",
     "react-input-autosize": "^3.0.0",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.3.0",
     "react-sortablejs": "^6.0.0",
     "sortablejs": "^1.10.2",
     "styled-components": "^5.2.1",
